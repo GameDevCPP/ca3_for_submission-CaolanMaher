@@ -80,6 +80,19 @@ void Level4Scene::UnLoad() {
 
 
 void Level4Scene::Update(const double& dt) {
+
+    sf::FloatRect rect;
+    rect.left = 300.f;
+    rect.top = 900.f;
+    rect.width = 1500.f;
+    rect.height = 1000.f;
+    sf::View view(rect);
+
+    view.setCenter(Vector2f(player->getPosition().x, player->getPosition().y));
+
+    // center camera on player
+    Engine::GetWindow().setView(view);
+
     Scene::Update(dt);
     const auto pp = player->getPosition();
     if (ls::getTileAt(pp) == ls::END) {

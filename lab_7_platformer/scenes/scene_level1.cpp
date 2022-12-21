@@ -9,6 +9,7 @@
 #include <thread>
 #include <fstream>
 #include "../../json/json.h"
+#include <SFML/Graphics.hpp>
 using json = nlohmann::json;
 
 using namespace std;
@@ -93,6 +94,18 @@ void Level1Scene::UnLoad() {
 }
 
 void Level1Scene::Update(const double& dt) {
+
+    sf::FloatRect rect;
+    rect.left = 300.f;
+    rect.top = 900.f;
+    rect.width = 1500.f;
+    rect.height = 1000.f;
+    sf::View view(rect);
+
+    view.setCenter(Vector2f(player->getPosition().x, player->getPosition().y));
+
+    // center camera on player
+    Engine::GetWindow().setView(view);
 
   if (ls::getTileAt(player->getPosition()) == ls::END) {
 
