@@ -3,10 +3,17 @@
 #include "../components/cmp_player_physics.h"
 #include "../game.h"
 #include "../components/cmp_bullet.h"
+#include "../components/cmp_health_player.h"
 #include <LevelSystem.h>
 #include <iostream>
+#include <fstream>
+#include "../../json/json.h"
+using json = nlohmann::json;
+
 using namespace std;
 using namespace sf;
+
+json player_data_3;
 
 static shared_ptr<Entity> player;
 
@@ -23,6 +30,11 @@ void Level3Scene::Load() {
 
     // pl->setPosition({100, 100});
       player = makeEntity();
+
+      // get player data from json
+      std::ifstream f("../../res/data/player_data.json");
+      player_data_3 = json::parse(f);
+
       player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
       auto s = player->addComponent<ShapeComponent>();
       s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
@@ -30,6 +42,11 @@ void Level3Scene::Load() {
       s->getShape().setOrigin(Vector2f(10.f, 15.f));
 
       player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
+
+      auto h = player->addComponent<HealthComponentPlayer>();
+
+      // get player's health from json
+      h->setHealth(player_data_3["max_health"]);
     // *********************************
   }
 
@@ -66,7 +83,7 @@ void Level3Scene::Update(const double& dt) {
   Scene::Update(dt);
   const auto pp = player->getPosition();
   if (ls::getTileAt(pp) == ls::END) {
-    Engine::ChangeScene((Scene*)&level1);
+    Engine::ChangeScene((Scene*)&level4);
   } else if (!player->isAlive()) {
     Engine::ChangeScene((Scene*)&level3);
   }

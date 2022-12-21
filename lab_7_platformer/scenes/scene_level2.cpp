@@ -4,11 +4,18 @@
 #include "../components/cmp_hurt_player.h"
 #include "../components/cmp_physics.h"
 #include "../components/cmp_player_physics.h"
+#include "../components/cmp_health_player.h"
 #include "../game.h"
 #include <LevelSystem.h>
 #include <iostream>
+#include <fstream>
+#include "../../json/json.h"
+using json = nlohmann::json;
+
 using namespace std;
 using namespace sf;
+
+json player_data_2;
 
 static shared_ptr<Entity> player;
 void Level2Scene::Load() {
@@ -21,6 +28,11 @@ void Level2Scene::Load() {
   {
     // *********************************
     player = makeEntity();
+
+    // get player data from json
+    std::ifstream f("../../res/data/player_data.json");
+      player_data_2 = json::parse(f);
+
     player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
     auto s = player->addComponent<ShapeComponent>();
     s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
@@ -29,6 +41,11 @@ void Level2Scene::Load() {
     // *********************************
     player->addTag("player");
     player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
+
+    auto h = player->addComponent<HealthComponentPlayer>();
+
+    // get player's health from json
+    h->setHealth(player_data_2["max_health"]);
   }
 
   // Create Enemy
@@ -87,6 +104,14 @@ void Level2Scene::Update(const double& dt) {
   Scene::Update(dt);
   const auto pp = player->getPosition();
   if (ls::getTileAt(pp) == ls::END) {
+      player_data_2["current_health"] = player->get_components<HealthComponentPlayer>()[0]->getHealth();
+      player_data_2["current_level"] = 3;
+
+      // update players json data with current data
+      std::ofstream o("../../res/data/player_data.json");
+
+      o << std::setw(4) << player_data_2 << std::endl;
+
     Engine::ChangeScene((Scene*)&level3);
   } else if (!player->isAlive()) {
     Engine::ChangeScene((Scene*)&level2);
