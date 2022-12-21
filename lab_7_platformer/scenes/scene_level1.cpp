@@ -7,6 +7,7 @@
 #include <LevelSystem.h>
 #include <iostream>
 #include <thread>
+#include <SFML/Audio.hpp>
 #include <fstream>
 #include "../../json/json.h"
 #include <SFML/Graphics.hpp>
@@ -28,9 +29,23 @@ void Level1Scene::Load() {
 
   cout << " Scene 1 Load" << endl;
   ls::loadLevelFile("../../res/level_1.txt", 40.0f);
+    //ls::loadLevelFile("../../res/levels/newTest.bmp", 40.0f);
+
+    cout << "LEVEL LOADED" << endl;
 
   auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
   ls::setOffset(Vector2f(0, ho));
+
+  //background_music_buffer.loadFromFile("../../res/background_music.wav");
+  //background_music.openFromFile("../../res/background_music.wav");
+
+  //if(background_music_buffer.loadFromFile("../res/audio/music/background_music.wav")) {
+      //background_music.setBuffer(background_music_buffer);
+      //background_music.play();
+  //}
+  //else {
+  //    throw std::runtime_error("Failed to load sound effect: ");
+  //}
 
   // Create player
   {
@@ -41,6 +56,7 @@ void Level1Scene::Load() {
     player_data = json::parse(f);
 
     player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
+      //player->setPosition(ls::getTilePosition(ls::findTiles(sf::Color(ls::START))[0]));
     auto s = player->addComponent<ShapeComponent>();
     s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
     s->getShape().setFillColor(Color::Magenta);

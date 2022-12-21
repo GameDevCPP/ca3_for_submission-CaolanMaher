@@ -5,64 +5,78 @@
 #ifndef GAMES_ENGINEERING_IMAGE_H
 #define GAMES_ENGINEERING_IMAGE_H
 
-#include <cstdint>
-#include <vector>
+#include <string>
+#include "SFML/Graphics/RenderWindow.hpp"
+#include "maths.h"
+#include <map>
+#include <SFML/Graphics.hpp>
 
-struct BMPFileHeader {
-    uint16_t file_type{0x4D42};
-    uint32_t file_size{0};
-    uint16_t reserved1{0};
-    uint16_t reserved2{0};
-    uint32_t offset_data{0};
-};
+#define ir ImageReader
 
-struct BMPInfoHeader {
-    uint32_t size{ 0 };
-    int32_t width{ 0 };
-    int32_t height{ 0 };
-    uint16_t planes{ 1 };
-    uint16_t bit_count{ 0 };
-    uint32_t compression{ 0 };
-    uint32_t size_image{ 0 };
-    int32_t x_pixels_per_meter{ 0 };
-    int32_t y_pixels_per_meter{ 0 };
-    uint32_t colors_used{ 0 };
-    uint32_t colors_important{ 0 };
-};
+class ImageReader {
+public:
+    static void loadLevelFile(char*, float tileSize = 100.0f);
+    static void unload();
+    static void render(sf::RenderWindow& window);
 
-struct BMPColorHeader {
-    uint32_t red_mask{ 0x00ff0000 };         // Bit mask for the red channel
-    uint32_t green_mask{ 0x0000ff00 };       // Bit mask for the green channel
-    uint32_t blue_mask{ 0x000000ff };        // Bit mask for the blue channel
-    uint32_t alpha_mask{ 0xff000000 };       // Bit mask for the alpha channel
-    uint32_t color_space_type{ 0x73524742 }; // Default "sRGB" (0x73524742)
-    uint32_t unused[16]{ 0 };                // Unused data for sRGB color space
-};
+    //typedef unsigned char Tile;
+    typedef int Tile;
 
-struct BMP {
-    BMPFileHeader file_header;
-    BMPInfoHeader bmp_info_header;
-    BMPColorHeader bmp_color_header;
-    std::vector<uint8_t> data;
+    // white is empty
+    // black is walls
+    // red is enemy
+    // green is item
+    // blue is end
 
-    BMP(const char *fname) {
-        read(fname);
-    }
+    enum TILES {
+        EMPTY = sf::Color(255.f, 255.f, 255.f).toInteger(),
+        WALL = sf::Color(0.f, 0.f, 0.f).toInteger(),
+        ENEMY = sf::Color(255.f, 0.f, 0.f).toInteger(),
+        ITEM = sf::Color(0.f, 255.f, 0.f).toInteger(),
+        END = sf::Color(0.f, 0.f, 255.f).toInteger()
+    };
 
-    void read(const char *fname) {
-    // ...
-    }
+    static Tile getTile(sf::Vector2ul);
 
-    BMP(int32_t width, int32_t height, bool has_alpha = true) {
-        // ...
-    }
+    static Tile getTileAt(sf::Vector2f);
 
-    void write(const char *fname) {
-        // ...
-    }
+    static size_t getWidth();
+
+    static size_t getHeight();
+
+    static sf::Vector2f getTilePosition(sf::Vector2ul);
+
+    static std::vector<sf::Vector2ul> findTiles(Tile);
+
+    static sf::Color getColor(Tile t);
+
+    static void setColor(Tile t, sf::Color c);
+
+    static void setOffset(const sf::Vector2f& _offset);
+
+    static const sf::Vector2f& getOffset();
+
+    static float getTileSize();
+
+protected:
+    static std::unique_ptr<Tile[]> _tiles;
+    static std::unique_ptr<sf::Color[]> _tileColours;
+    static size_t _width;
+    static size_t _height;
+    static sf::Vector2f _offset;
+
+    static std::vector<std::unique_ptr<sf::RectangleShape>> _sprites;
+
+    //static void buildSprites(bool optimise = true);
+    static void buildSprites();
+
+    static float _tileSize; // for rendering
+    static std::map<Tile, sf::Color> _colours;
 
 private:
-    // ...
+    ImageReader() = delete;
+
+    ~ImageReader() = delete;
 };
 
 #endif //GAMES_ENGINEERING_IMAGE_H

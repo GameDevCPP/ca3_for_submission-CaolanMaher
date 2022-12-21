@@ -84,7 +84,7 @@ file(GLOB_RECURSE SCENES lab_7_platformer/scenes/*.cpp practical_6_platformer/sc
 #add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES} lab_7_platformer/components/cmp_health_player.cpp lab_7_platformer/components/cmp_health_player.h lab_7_platformer/components/cmp_player_attack.cpp lab_7_platformer/components/cmp_player_attack.h)
 #add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES} lab_7_platformer/components/cmp_player_attack.cpp lab_7_platformer/components/cmp_player_attack.h)
 add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES} lab_7_platformer/components/cmp_health_player.cpp lab_7_platformer/components/cmp_health_player.h
-        lab_7_platformer/scenes/scene_level4.cpp lab_7_platformer/scenes/scene_level4.h lab_7_platformer/components/cmp_player_attack.cpp lab_7_platformer/components/cmp_player_attack.h lab_7_platformer/components/cmp_item.cpp lab_7_platformer/components/cmp_item.h)
+        lab_7_platformer/scenes/scene_level4.cpp lab_7_platformer/scenes/scene_level4.h lab_7_platformer/components/cmp_player_attack.cpp lab_7_platformer/components/cmp_player_attack.h lab_7_platformer/components/cmp_item.cpp lab_7_platformer/components/cmp_item.h lab_7_platformer/components/cmp_double_jump.cpp lab_7_platformer/components/cmp_double_jump.h)
 #add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES})
 source_group("components" FILES ${CMPNTS})
 source_group("resources" FILES ${RESOURCE_FILES})

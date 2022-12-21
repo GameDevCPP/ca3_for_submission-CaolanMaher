@@ -3,3 +3,12 @@
 //
 
 #include "cmp_item.h"
+
+void ItemComponent::update(double dt) {
+
+}
+
+ItemComponent::ItemComponent(Entity *p, int duration, int effect) : Component(p) {
+    item_duration = duration;
+    this->effect = effect;
+}
