@@ -7,6 +7,7 @@ using namespace sf;
 void HurtComponent::update(double dt) {
   if (auto pl = _player.lock()) {
     if (length(pl->getPosition() - _parent->getPosition()) < 25.0) {
+        cout << "PLAYER HIT" << endl;
       pl->setForDelete();
       _parent->setForDelete();
     }

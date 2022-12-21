@@ -1,4 +1,5 @@
 #include "cmp_player_physics.h"
+#include "../components/cmp_double_jump.h"
 #include "system_physics.h"
 #include <LevelSystem.h>
 #include <SFML/Window/Keyboard.hpp>
@@ -38,6 +39,10 @@ void PlayerPhysicsComponent::update(double dt) {
     teleport(ls::getTilePosition(ls::findTiles(ls::START)[0]));
   }
 
+  //if(_parent->get_components<DoubleJumpComponent>()[0]) {
+  //    _hasDoubleJump = true;
+  //}
+
   if (Keyboard::isKeyPressed(Keyboard::Left) ||
       Keyboard::isKeyPressed(Keyboard::Right)) {
     // Moving Either Left or Right
@@ -56,10 +61,16 @@ void PlayerPhysicsComponent::update(double dt) {
   // Handle Jump
   if (Keyboard::isKeyPressed(Keyboard::Up)) {
     _grounded = isGrounded();
-    if (_grounded) {
+    if (_grounded && !_hasDoubleJump) {
       setVelocity(Vector2f(getVelocity().x, 0.f));
       teleport(Vector2f(pos.x, pos.y - 2.0f));
       impulse(Vector2f(0, -6.f));
+    }
+    else if(_grounded && _hasDoubleJump) {
+        _hasDoubleJump = false;
+        setVelocity(Vector2f(getVelocity().x, 0.f));
+        teleport(Vector2f(pos.x, pos.y - 6.0f));
+        impulse(Vector2f(0, -10.f));
     }
   }
 

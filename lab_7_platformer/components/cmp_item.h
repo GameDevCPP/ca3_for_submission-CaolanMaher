@@ -12,11 +12,12 @@ class ItemComponent : public Component {
 private:
     int item_duration;
     int effect;
-    enum EFFECT {
-        DOUBLE_JUMP,
-        HEALTH,
-        SHIELD
-    };
+    std::weak_ptr<Entity> _player;
+    //enum EFFECT {
+    //    DOUBLE_JUMP,
+    //    HEALTH,
+    //    SHIELD
+    //};
 
 public:
     void update(double dt) override;

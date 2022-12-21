@@ -3,6 +3,7 @@
 #include "../components/cmp_sprite.h"
 #include "../components/cmp_health_player.h"
 #include "../components/cmp_player_attack.h"
+#include "../components/cmp_double_jump.h"
 #include "../game.h"
 #include <LevelSystem.h>
 #include <iostream>
@@ -17,6 +18,7 @@ using namespace std;
 using namespace sf;
 
 static shared_ptr<Entity> player;
+static vector<shared_ptr<Entity>> doubleJumps;
 
 json player_data;
 
@@ -95,6 +97,22 @@ void Level1Scene::Load() {
     }
   }
 
+  // add double jump item
+  cout << "LOADING DOUBLE JUMP" << endl;
+    {
+        for(int i = 0; i < ls::findTiles('d').size(); i++) {
+            auto doubleJump = makeEntity();
+            doubleJump->setPosition(ls::getTilePosition(ls::findTiles('d')[i]) + Vector2f(20, 0));
+            cout << doubleJump->getPosition() << endl;
+            //doubleJump->addComponent<DoubleJumpComponent>();
+            auto s = doubleJump->addComponent<ShapeComponent>();
+            s->setShape<sf::CircleShape>(10.f);
+            s->getShape().setFillColor(Color::Yellow);
+            s->getShape().setOrigin(Vector2f(10.f, 10.f));
+            doubleJumps.push_back(doubleJump);
+        }
+    }
+
   //Simulate long loading times
   std::this_thread::sleep_for(std::chrono::milliseconds(3000));
   cout << " Scene 1 Load Done" << endl;
@@ -122,6 +140,18 @@ void Level1Scene::Update(const double& dt) {
 
     // center camera on player
     Engine::GetWindow().setView(view);
+
+    //cout << player->getPosition() << endl;
+
+    // check players position with double jump
+    for(int i = 0; i < doubleJumps.size(); i++) {
+        if (player->getPosition().x < doubleJumps[i]->getPosition().x + 5
+            && player->getPosition().x > doubleJumps[i]->getPosition().x - 5) {
+            player->addComponent<DoubleJumpComponent>();
+            player->get_components<PlayerPhysicsComponent>()[0]->_hasDoubleJump = true;
+            cout << "DOUBLE JUMP GOT" << endl;
+        }
+    }
 
   if (ls::getTileAt(player->getPosition()) == ls::END) {
 
