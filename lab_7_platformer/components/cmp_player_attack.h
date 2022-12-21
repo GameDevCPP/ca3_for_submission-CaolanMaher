@@ -5,9 +5,24 @@
 #ifndef GAMES_ENGINEERING_CMP_PLAYER_ATTACK_H
 #define GAMES_ENGINEERING_CMP_PLAYER_ATTACK_H
 
+#include "ecm.h"
+#include <SFML/Audio.hpp>
 
-class cmp_player_attack {
+class AttackComponentPlayer : public Component {
 
+private:
+    sf::SoundBuffer slashBuffer;
+    sf::Sound slashSound;
+
+public:
+    AttackComponentPlayer() = delete;
+
+    explicit AttackComponentPlayer(Entity* p);
+
+    void play(sf::String track);
+
+    void update(double dt) override;
+    void render() override;
 };
 
 

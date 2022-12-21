@@ -8,6 +8,7 @@ MenuScene menu;
 Level1Scene level1;
 Level2Scene level2;
 Level3Scene level3;
+Level4Scene level4;
 
 int main() {
     cout << "STARTING" << endl;

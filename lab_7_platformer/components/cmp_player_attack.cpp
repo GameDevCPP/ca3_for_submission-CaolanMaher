@@ -3,3 +3,27 @@
 //
 
 #include "cmp_player_attack.h"
+//#include <fstream>
+//#include "../../json/json.h"
+//using json = nlohmann::json;
+
+//using namespace sf;
+
+/*
+
+AttackComponentPlayer::AttackComponentPlayer(Entity *p) : Component(p) {
+
+}
+
+void AttackComponentPlayer::play(sf::String track) {
+
+}
+
+void AttackComponentPlayer::update(double dt) {
+
+}
+
+void AttackComponentPlayer::render() {
+
+}
+*/

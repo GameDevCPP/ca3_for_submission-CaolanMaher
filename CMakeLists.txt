@@ -51,9 +51,9 @@ target_sources(lib_maths INTERFACE "${CMAKE_SOURCE_DIR}/lib_maths/maths.h")
 target_include_directories(lib_maths INTERFACE "${CMAKE_SOURCE_DIR}/lib_maths" INTERFACE ${SFML_INCS})
 
 ## JSON lib
-add_library(lib_json INTERFACE)
-target_sources(lib_json INTERFACE "${CMAKE_SOURCE_DIR}/lib_json/json.h")
-target_include_directories(lib_json INTERFACE "${CMAKE_SOURCE_DIR}/lib_json" INTERFACE ${SFML_INCS})
+add_library(json INTERFACE)
+target_sources(json INTERFACE "${CMAKE_SOURCE_DIR}json/json.h")
+target_include_directories(json INTERFACE "${CMAKE_SOURCE_DIR}/json" INTERFACE ${SFML_INCS})
 
 # Image lib
 file(GLOB_RECURSE SOURCE_FILES lib_image/*.cpp lib_image/*.h)
@@ -81,7 +81,11 @@ target_link_libraries(lib_ecm PRIVATE lib_maths)
 file(GLOB_RECURSE SOURCES lab_7_platformer/*.cpp practical_6_platformer/*.h)
 file(GLOB_RECURSE CMPNTS lab_7_platformer/components/*.cpp practical_6_platformer/components/*.h)
 file(GLOB_RECURSE SCENES lab_7_platformer/scenes/*.cpp practical_6_platformer/scenes/*.h)
-add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES} lab_7_platformer/components/cmp_health_player.cpp lab_7_platformer/components/cmp_health_player.h)
+#add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES} lab_7_platformer/components/cmp_health_player.cpp lab_7_platformer/components/cmp_health_player.h lab_7_platformer/components/cmp_player_attack.cpp lab_7_platformer/components/cmp_player_attack.h)
+#add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES} lab_7_platformer/components/cmp_player_attack.cpp lab_7_platformer/components/cmp_player_attack.h)
+add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES} lab_7_platformer/components/cmp_health_player.cpp lab_7_platformer/components/cmp_health_player.h
+        lab_7_platformer/scenes/scene_level4.cpp lab_7_platformer/scenes/scene_level4.h lab_7_platformer/components/cmp_player_attack.cpp lab_7_platformer/components/cmp_player_attack.h lab_7_platformer/components/cmp_item.cpp lab_7_platformer/components/cmp_item.h)
+#add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES})
 source_group("components" FILES ${CMPNTS})
 source_group("resources" FILES ${RESOURCE_FILES})
 #target_include_directories(PRACTICAL_6_PLATFORMER SYSTEM PRIVATE ${SFML_INCS} ${B2D_INCS})

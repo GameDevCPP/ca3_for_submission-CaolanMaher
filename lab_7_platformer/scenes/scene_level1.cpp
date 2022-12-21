@@ -2,6 +2,7 @@
 #include "../components/cmp_player_physics.h"
 #include "../components/cmp_sprite.h"
 #include "../components/cmp_health_player.h"
+#include "../components/cmp_player_attack.h"
 #include "../game.h"
 #include <LevelSystem.h>
 #include <iostream>
@@ -48,6 +49,10 @@ void Level1Scene::Load() {
 
     auto h = player->addComponent<HealthComponentPlayer>();
 
+    //auto a = player->addComponent<AttackComponentPlayer>();
+
+    //a->play("slash");
+
     // get player's health from json
     h->setHealth(player_data["max_health"]);
 
@@ -91,9 +96,10 @@ void Level1Scene::Update(const double& dt) {
 
   if (ls::getTileAt(player->getPosition()) == ls::END) {
 
-      player->get_components<HealthComponentPlayer>()[0]->setHealth(77);
+      //player->get_components<HealthComponentPlayer>()[0]->setHealth(77);
 
       player_data["current_health"] = player->get_components<HealthComponentPlayer>()[0]->getHealth();
+      player_data["current_level"] = 2;
 
       // update players json data with current data
       std::ofstream o("../../res/data/player_data.json");
