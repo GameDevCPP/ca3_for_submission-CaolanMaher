@@ -50,15 +50,26 @@ add_library(lib_maths INTERFACE)
 target_sources(lib_maths INTERFACE "${CMAKE_SOURCE_DIR}/lib_maths/maths.h")
 target_include_directories(lib_maths INTERFACE "${CMAKE_SOURCE_DIR}/lib_maths" INTERFACE ${SFML_INCS})
 
+## JSON lib
+add_library(lib_json INTERFACE)
+target_sources(lib_json INTERFACE "${CMAKE_SOURCE_DIR}/lib_json/json.h")
+target_include_directories(lib_json INTERFACE "${CMAKE_SOURCE_DIR}/lib_json" INTERFACE ${SFML_INCS})
+
+# Image lib
+file(GLOB_RECURSE SOURCE_FILES lib_image/*.cpp lib_image/*.h)
+add_library(lib_image STATIC ${SOURCE_FILES} ${RESOURCE_FILES} lib_image/image.cpp lib_image/image.h)
+target_include_directories(lib_image INTERFACE "${CMAKE_SOURCE_DIR}/lib_image/" )
+target_link_libraries(lib_image lib_maths sfml-graphics)
+
 ## Tile loader lib
 file(GLOB_RECURSE SOURCE_FILES lib_tile_level_loader/*.cpp lib_tile_level_loader/*.h)
-add_library(lib_tile_level_loader STATIC ${SOURCE_FILES} ${RESOURCE_FILES})
+add_library(lib_tile_level_loader STATIC ${SOURCE_FILES} ${RESOURCE_FILES} lib_tile_level_loader/LevelSystem.cpp lib_tile_level_loader/LevelSystem.h)
 target_include_directories(lib_tile_level_loader INTERFACE "${CMAKE_SOURCE_DIR}/lib_tile_level_loader/" )
 target_link_libraries(lib_tile_level_loader lib_maths sfml-graphics)
 
 ## ECM lib
 file(GLOB_RECURSE SOURCE_FILES lib_ecm/*.cpp lib_ecm/*.h)
-add_library(lib_ecm STATIC ${SOURCE_FILES})
+add_library(lib_ecm STATIC ${SOURCE_FILES} json/json.h lib_image/image.h)
 target_include_directories(lib_ecm INTERFACE "${CMAKE_SOURCE_DIR}/lib_ecm" )
 target_link_libraries(lib_ecm PRIVATE lib_maths)
 
@@ -70,7 +81,7 @@ target_link_libraries(lib_ecm PRIVATE lib_maths)
 file(GLOB_RECURSE SOURCES lab_7_platformer/*.cpp practical_6_platformer/*.h)
 file(GLOB_RECURSE CMPNTS lab_7_platformer/components/*.cpp practical_6_platformer/components/*.h)
 file(GLOB_RECURSE SCENES lab_7_platformer/scenes/*.cpp practical_6_platformer/scenes/*.h)
-add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES})
+add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES} lab_7_platformer/components/cmp_health_player.cpp lab_7_platformer/components/cmp_health_player.h)
 source_group("components" FILES ${CMPNTS})
 source_group("resources" FILES ${RESOURCE_FILES})
 #target_include_directories(PRACTICAL_6_PLATFORMER SYSTEM PRIVATE ${SFML_INCS} ${B2D_INCS})
