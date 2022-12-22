@@ -73,7 +73,7 @@ void Level1Scene::Load() {
         cout << "ERROR" << endl;
     }
     sp->setTexure(playerTexture);
-    sp->getSprite().setOrigin(Vector2f(25.f, 50.f));
+    sp->getSprite().setOrigin(Vector2f(25.f, 65.f));
     sp->getSprite().scale(Vector2f(0.4, 0.4));
       cout << "Done TEXTURE" << endl;
 
