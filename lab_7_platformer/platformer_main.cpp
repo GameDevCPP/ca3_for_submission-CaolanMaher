@@ -2,6 +2,7 @@
 #include "game.h"
 #include "scenes/scene_menu.h"
 #include "../lib_image/image.h"
+#include <SFML/Audio.hpp>
 #include <LevelSystem.h>
 
 using namespace std;
@@ -20,6 +21,8 @@ int main() {
     //cout << to_string(bmp_data[0]) + to_string(bmp_data[1]) + to_string(bmp_data[2]) << endl;
 
     //ls::loadLevelFile("../../res/levels/newTest.bmp");
+
+    //sf::Music music;
 
 
   Engine::Start(1280, 720, "Platformer",&menu);

@@ -5,7 +5,10 @@ using namespace sf;
 void BulletComponent::update(double dt) {
   _lifetime -= dt;
   if (_lifetime <= 0.f) {
-    _parent->setForDelete();
+      //cout << "BULLET AVAILABLE" << endl;
+      _isAvailable = true;
+      _lifetime = _maxLifetime;
+    //_parent->setForDelete();
   }
 }
 

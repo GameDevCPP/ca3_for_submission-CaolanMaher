@@ -57,12 +57,25 @@ void Level1Scene::Load() {
     std::ifstream f("../../res/data/player_data.json");
     player_data = json::parse(f);
 
-    player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
+    player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]) + Vector2f(0, -50));
       //player->setPosition(ls::getTilePosition(ls::findTiles(sf::Color(ls::START))[0]));
-    auto s = player->addComponent<ShapeComponent>();
-    s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
-    s->getShape().setFillColor(Color::Magenta);
-    s->getShape().setOrigin(Vector2f(10.f, 15.f));
+    //auto s = player->addComponent<ShapeComponent>();
+    //s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
+    //s->getShape().setFillColor(Color::Magenta);
+    //s->getShape().setOrigin(Vector2f(10.f, 15.f));
+
+    cout << "TEXTURE" << endl;
+    auto sp = player->addComponent<SpriteComponent>();
+    shared_ptr<sf::Texture> playerTexture;
+    playerTexture = make_shared<sf::Texture>();
+      cout << "TEXTURE 2" << endl;
+    if(!playerTexture->loadFromFile("../../res/sprites/player_sheet.png", sf::IntRect({40, 40}, {50, 100}))) {
+        cout << "ERROR" << endl;
+    }
+    sp->setTexure(playerTexture);
+    sp->getSprite().setOrigin(Vector2f(25.f, 50.f));
+    sp->getSprite().scale(Vector2f(0.4, 0.4));
+      cout << "Done TEXTURE" << endl;
 
     player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
 

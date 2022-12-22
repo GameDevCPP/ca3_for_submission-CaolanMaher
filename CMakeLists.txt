@@ -59,13 +59,13 @@ target_include_directories(json INTERFACE "${CMAKE_SOURCE_DIR}/json" INTERFACE $
 file(GLOB_RECURSE SOURCE_FILES lib_image/*.cpp lib_image/*.h)
 add_library(lib_image STATIC ${SOURCE_FILES} ${RESOURCE_FILES} lib_image/image.cpp lib_image/image.h)
 target_include_directories(lib_image INTERFACE "${CMAKE_SOURCE_DIR}/lib_image/" )
-target_link_libraries(lib_image lib_maths sfml-graphics)
+target_link_libraries(lib_image lib_maths sfml-graphics sfml-audio)
 
 ## Tile loader lib
 file(GLOB_RECURSE SOURCE_FILES lib_tile_level_loader/*.cpp lib_tile_level_loader/*.h)
 add_library(lib_tile_level_loader STATIC ${SOURCE_FILES} ${RESOURCE_FILES} lib_tile_level_loader/LevelSystem.cpp lib_tile_level_loader/LevelSystem.h)
 target_include_directories(lib_tile_level_loader INTERFACE "${CMAKE_SOURCE_DIR}/lib_tile_level_loader/" )
-target_link_libraries(lib_tile_level_loader lib_maths sfml-graphics)
+target_link_libraries(lib_tile_level_loader lib_maths sfml-graphics sfml-audio)
 
 ## ECM lib
 file(GLOB_RECURSE SOURCE_FILES lib_ecm/*.cpp lib_ecm/*.h)
