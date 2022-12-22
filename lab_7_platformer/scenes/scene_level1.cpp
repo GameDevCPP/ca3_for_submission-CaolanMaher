@@ -23,6 +23,11 @@ static vector<shared_ptr<Entity>> doubleJumps;
 json player_data;
 
 void Level1Scene::Load() {
+
+    sf::Music music;
+    music.openFromFile("../../res/audio/music/background_music.wav");
+    music.play();
+
     // TESTING
     //std::ifstream f("../../res/data/player_data.json");
     //json data = json::parse(f);
