@@ -76,13 +76,14 @@ void Level1Scene::Load() {
         cout << "ERROR" << endl;
     }
     sp->setTexure(playerTexture);
-    sp->getSprite().setOrigin(Vector2f(25.f, 25.f));
+    sp->getSprite().setOrigin(Vector2f(25.f, 65.f));
     sp->getSprite().scale(Vector2f(0.4, 0.4));
       cout << "Done TEXTURE" << endl;
 
-    player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
+      //player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
       player->addTag("player");
     player->addComponent<AttackComponentPlayer>();
+      //player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
 
     auto h = player->addComponent<HealthComponentPlayer>();
 

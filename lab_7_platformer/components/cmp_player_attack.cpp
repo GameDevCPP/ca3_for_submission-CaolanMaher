@@ -58,9 +58,11 @@ void AttackComponentPlayer::update(double dt) {
     if (Keyboard::isKeyPressed(Keyboard::Right)) {
         //if(_isAttacking) {
             if (_player.lock()->get_components<PlayerPhysicsComponent>()[0]->_facingRight) {
+                std::cout << "Player facing right and pressing right" << std::endl;
                 swordSprite.scale({1, 1});
                 //swordSprite.setPosition({_player.lock()->getPosition().x + 10, _player.lock()->getPosition().y - 20});
             } else {
+                std::cout << "Player facing left and pressing right" << std::endl;
                 swordSprite.scale({-1, 1});
                 //swordSprite.setPosition({_player.lock()->getPosition().x + 10, _player.lock()->getPosition().y - 20});
             }
@@ -69,9 +71,11 @@ void AttackComponentPlayer::update(double dt) {
     else if(Keyboard::isKeyPressed(Keyboard::Left)) {
         //if(_isAttacking) {
             if (_player.lock()->get_components<PlayerPhysicsComponent>()[0]->_facingRight) {
+                std::cout << "Player facing right and pressing left" << std::endl;
                 swordSprite.scale({-1, 1});
                 //swordSprite.setPosition({_player.lock()->getPosition().x - 10, _player.lock()->getPosition().y - 20});
             } else {
+                std::cout << "Player facing left and pressing left" << std::endl;
                 swordSprite.scale({1, 1});
                 //swordSprite.setPosition({_player.lock()->getPosition().x - 10, _player.lock()->getPosition().y - 20});
             }
@@ -80,8 +84,8 @@ void AttackComponentPlayer::update(double dt) {
     //}
 
     _currentTime -= dt;
-    if (_currentTime <= 0.f) {
-        //cout << "BULLET AVAILABLE" << endl;
+    if (_currentTime <= 0.f && _isAttacking) {
+        std::cout << "ATTACK AVAILABLE" << std::endl;
         _isAttacking = false;
         _currentTime = _attackTime;
         //_parent->setForDelete();
