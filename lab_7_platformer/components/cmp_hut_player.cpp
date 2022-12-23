@@ -32,14 +32,14 @@ void HurtComponent::update(double dt) {
 
         cout << "PLAYER HIT" << endl;
         auto health = pl->get_components<HealthComponentPlayer>()[0]->getHealth();
-        pl->get_components<HealthComponentPlayer>()[0]->setHealth(health - 50);
+        pl->get_components<HealthComponentPlayer>()[0]->setHealth(health - 25);
 
         cout << "HEALTH: " << pl->get_components<HealthComponentPlayer>()[0]->getHealth() << endl;
 
         if(pl->get_components<HealthComponentPlayer>()[0]->getHealth() <= 0) {
             pl->setForDelete();
             _parent->setForDelete();
-            cout << "ENEMY DELETED" << endl;
+            //cout << "ENEMY DELETED" << endl;
         }
     }
   }

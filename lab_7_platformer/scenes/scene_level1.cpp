@@ -6,6 +6,7 @@
 #include "../components/cmp_double_jump.h"
 #include "../components/cmp_hurt_player.h"
 #include "../components/cmp_flying_enemy.h"
+#include "../components/cmp_enemy_turret.h"
 #include "../game.h"
 #include <LevelSystem.h>
 #include <iostream>
@@ -100,7 +101,24 @@ void Level1Scene::Load() {
     //player_data["max_health"] = 500;
   }
 
+    // Create Turret
+    /*
+    {
+        auto turret = makeEntity();
+        turret->setPosition(ls::getTilePosition(ls::findTiles('t')[0]) +
+                            Vector2f(20, 0));
+        auto s = turret->addComponent<ShapeComponent>();
+        s->setShape<sf::CircleShape>(16.f, 3);
+        s->getShape().setFillColor(Color::Red);
+        s->getShape().setOrigin(Vector2f(16.f, 16.f));
+        turret->addComponent<EnemyTurretComponent>();
+
+        enemies.push_back(turret);
+    }
+     */
+
   // create flying enemies
+  /*
     {
         for(int i = 0; i < ls::findTiles('f').size(); i++) {
             auto flyingEnemy = makeEntity();
@@ -119,6 +137,7 @@ void Level1Scene::Load() {
             enemies.push_back(flyingEnemy);
         }
     }
+    */
 
   //cout << "Player Health: " << player->get_components<HealthComponentPlayer>()[0]->getHealth() << endl;
 
@@ -174,6 +193,11 @@ void Level1Scene::UnLoad() {
     for(int i = 0; i < doubleJumps.size(); i++) {
         doubleJumps[i].reset();
     }
+    /*
+    for (int i = 0; i < enemies.size(); i++) {
+        enemies[i].reset();
+    }
+     */
   ls::unload();
   Scene::UnLoad();
 }
@@ -192,6 +216,8 @@ void Level1Scene::Update(const double& dt) {
     // center camera on player
     Engine::GetWindow().setView(view);
 
+    Scene::Update(dt);
+
     //cout << player->getPosition() << endl;
 
     // check players position with double jump
@@ -207,8 +233,28 @@ void Level1Scene::Update(const double& dt) {
         }
     }
 
-    // check if enemies are nearby while player attacking
+    const auto pp = player->getPosition();
 
+    // check if enemies are nearby while player attacking
+    /*
+    if(player->get_components<AttackComponentPlayer>()[0]->_isAttacking) {
+        for (int i = 0; i < enemies.size(); i++) {
+            auto enemy = enemies[i];
+
+            if (pp.x < enemy->getPosition().x + 30
+                && pp.x > enemy->getPosition().x - 30
+                && pp.y > enemy->getPosition().y - 30
+                && pp.y < enemy->getPosition().y + 30)
+            {
+                //cout << pp.y << " " << enemy->getPosition().y << endl;
+                cout << "HIT ENEMY" << endl;
+                //ents.list.erase(ents.list.begin() + 1 + i);
+                enemies.erase(enemies.begin() + i);
+                enemy->setForDelete();
+            }
+        }
+    }
+     */
 
     /*
     for(int i = 0; i < doubleJumps.size(); i++) {
@@ -235,8 +281,10 @@ void Level1Scene::Update(const double& dt) {
 
     Engine::ChangeScene((Scene*)&level2);
     return;
+  } else if (!player->isAlive()) {
+      Engine::ChangeScene((Scene*)&level1);
+      return;
   }
-  Scene::Update(dt);
 }
 
 void Level1Scene::Render() {

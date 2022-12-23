@@ -141,9 +141,11 @@ void Level3Scene::UnLoad() {
     for(int i = 0; i < doubleJumps.size(); i++) {
         doubleJumps[i].reset();
     }
+    doubleJumps.clear();
     for (int i = 0; i < enemies.size(); i++) {
         enemies[i].reset();
     }
+    enemies.clear();
   ls::unload();
   Scene::UnLoad();
 }

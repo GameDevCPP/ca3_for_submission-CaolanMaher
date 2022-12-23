@@ -6,6 +6,8 @@
 #include "../components/cmp_physics.h"
 #include "../components/cmp_player_physics.h"
 #include "../components/cmp_health_player.h"
+#include "../components/cmp_flying_enemy.h"
+#include "../components/cmp_double_jump.h"
 #include "../game.h"
 #include <LevelSystem.h>
 #include <iostream>
@@ -20,6 +22,7 @@ json player_data_2;
 
 sf::Music music_2;
 
+static vector<shared_ptr<Entity>> doubleJumps;
 static vector<shared_ptr<Entity>> enemies;
 
 static shared_ptr<Entity> player;
@@ -62,7 +65,52 @@ void Level2Scene::Load() {
 
     // get player's health from json
     h->setHealth(player_data_2["max_health"]);
+
+    cout << h->getHealth() << endl;
   }
+
+    // add flying enemy
+    cout << "LOADING FLYING ENEMY" << endl;
+    {
+
+        for(int i = 0; i < ls::findTiles('f').size(); i++) {
+            auto flyingEnemy = makeEntity();
+            flyingEnemy->setPosition(ls::getTilePosition(ls::findTiles('f')[i]) +
+                                     Vector2f(0, 7.5));
+            // *********************************
+            // Add HurtComponent
+            flyingEnemy->addComponent<HurtComponent>();
+            // Add ShapeComponent, Red 16.f Circle
+            auto s = flyingEnemy->addComponent<ShapeComponent>();
+            s->setShape<sf::CircleShape>(16.f);
+            s->getShape().setFillColor(Color::Red);
+            // Add EnemyAIComponent
+            //enemy->addComponent<EnemyAIComponent>();
+            flyingEnemy->addComponent<FlyingEnemyComponent>();
+            enemies.push_back(flyingEnemy);
+        }
+
+        //for_each(v.begin(), v.end(), [](int i)
+        //{
+        //    std::cout << i << " ";
+        //});
+    }
+
+    // add double jump item
+    cout << "LOADING DOUBLE JUMP" << endl;
+    {
+        for(int i = 0; i < ls::findTiles('d').size(); i++) {
+            auto doubleJump = makeEntity();
+            doubleJump->setPosition(ls::getTilePosition(ls::findTiles('d')[i]) + Vector2f(20, 20));
+            cout << doubleJump->getPosition() << endl;
+            //doubleJump->addComponent<DoubleJumpComponent>();
+            auto s = doubleJump->addComponent<ShapeComponent>();
+            s->setShape<sf::CircleShape>(10.f);
+            s->getShape().setFillColor(Color::Yellow);
+            s->getShape().setOrigin(Vector2f(10.f, 10.f));
+            doubleJumps.push_back(doubleJump);
+        }
+    }
 
   // Create Enemy
   {
@@ -85,16 +133,18 @@ void Level2Scene::Load() {
 
   // Create Turret
   {
-    auto turret = makeEntity();
-    turret->setPosition(ls::getTilePosition(ls::findTiles('t')[0]) +
-                        Vector2f(20, 0));
-    auto s = turret->addComponent<ShapeComponent>();
-    s->setShape<sf::CircleShape>(16.f, 3);
-    s->getShape().setFillColor(Color::Red);
-    s->getShape().setOrigin(Vector2f(16.f, 16.f));
-    turret->addComponent<EnemyTurretComponent>();
+      for(int i = 0; i < ls::findTiles('t').size(); i++) {
+          auto turret = makeEntity();
+          turret->setPosition(ls::getTilePosition(ls::findTiles('t')[i]) +
+                              Vector2f(20, 0));
+          auto s = turret->addComponent<ShapeComponent>();
+          s->setShape<sf::CircleShape>(16.f, 3);
+          s->getShape().setFillColor(Color::Red);
+          s->getShape().setOrigin(Vector2f(16.f, 16.f));
+          turret->addComponent<EnemyTurretComponent>();
 
-    enemies.push_back(turret);
+          enemies.push_back(turret);
+      }
   }
 
   // Add physics colliders to level tiles.
@@ -122,10 +172,15 @@ void Level2Scene::UnLoad() {
   cout << "Scene 2 UnLoad" << endl;
   music_2.stop();
   player.reset();
-  ls::unload();
+    for(int i = 0; i < doubleJumps.size(); i++) {
+        doubleJumps[i].reset();
+    }
+    doubleJumps.clear();
     for (int i = 0; i < enemies.size(); i++) {
         enemies[i].reset();
     }
+    enemies.clear();
+  ls::unload();
   Scene::UnLoad();
 }
 
@@ -145,6 +200,19 @@ void Level2Scene::Update(const double& dt) {
 
   Scene::Update(dt);
   const auto pp = player->getPosition();
+
+    // check players position with double jump
+    for(int i = 0; i < doubleJumps.size(); i++) {
+        if (player->getPosition().x < doubleJumps[i]->getPosition().x + 5
+            && player->getPosition().x > doubleJumps[i]->getPosition().x - 5
+            && player->getPosition().y > doubleJumps[i]->getPosition().y - 5
+            && player->getPosition().y < doubleJumps[i]->getPosition().y + 5
+            && !player->get_components<PlayerPhysicsComponent>()[0]->_hasDoubleJump) {
+            player->addComponent<DoubleJumpComponent>();
+            player->get_components<PlayerPhysicsComponent>()[0]->_hasDoubleJump = true;
+            cout << "DOUBLE JUMP GOT" << endl;
+        }
+    }
 
   if(player->get_components<AttackComponentPlayer>()[0]->_isAttacking) {
       for (int i = 0; i < enemies.size(); i++) {
