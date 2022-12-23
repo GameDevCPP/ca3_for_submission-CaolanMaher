@@ -45,11 +45,27 @@ void PlayerPhysicsComponent::update(double dt) {
 
   if (Keyboard::isKeyPressed(Keyboard::Left) ||
       Keyboard::isKeyPressed(Keyboard::Right)) {
+      //_parent->get_components<SpriteComponent>()[0]->getSprite().scale(Vector2f(-1, 1));
     // Moving Either Left or Right
     if (Keyboard::isKeyPressed(Keyboard::Right)) {
+        if(_facingRight) {
+            _parent->get_components<SpriteComponent>()[0]->getSprite().scale(Vector2f(1, 1));
+        }
+        else {
+            _parent->get_components<SpriteComponent>()[0]->getSprite().scale(Vector2f(-1, 1));
+            _facingRight = true;
+        }
       if (getVelocity().x < _maxVelocity.x)
         impulse({(float)(dt * _groundspeed), 0});
+      // pressing left
     } else {
+        if(_facingRight) {
+            _parent->get_components<SpriteComponent>()[0]->getSprite().scale(Vector2f(-1, 1));
+            _facingRight = false;
+        }
+        else {
+            _parent->get_components<SpriteComponent>()[0]->getSprite().scale(Vector2f(1, 1));
+        }
       if (getVelocity().x > -_maxVelocity.x)
         impulse({-(float)(dt * _groundspeed), 0});
     }
@@ -104,4 +120,6 @@ PlayerPhysicsComponent::PlayerPhysicsComponent(Entity* p,
   _body->SetFixedRotation(true);
   //Bullet items have higher-res collision detection
   _body->SetBullet(true);
+
+  _facingRight = true;
 }

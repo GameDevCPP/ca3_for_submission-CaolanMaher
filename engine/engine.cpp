@@ -4,6 +4,7 @@
 #include "system_renderer.h"
 #include "system_resources.h"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <future>
 #include <iostream>
 #include <stdexcept>
@@ -12,6 +13,7 @@ using namespace sf;
 using namespace std;
 Scene* Engine::_activeScene = nullptr;
 std::string Engine::_gameName;
+//sf::Music music;
 
 static bool loading = false;
 static float loadingspinner = 0.f;

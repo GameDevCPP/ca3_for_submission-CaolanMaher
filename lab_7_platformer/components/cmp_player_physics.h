@@ -18,5 +18,6 @@ public:
 
   PlayerPhysicsComponent() = delete;
 
+    bool _facingRight;
     bool _hasDoubleJump = false;
 };

@@ -22,7 +22,10 @@ static vector<shared_ptr<Entity>> doubleJumps;
 
 json player_data;
 
+sf::Music music;
+
 void Level1Scene::Load() {
+
     // TESTING
     //std::ifstream f("../../res/data/player_data.json");
     //json data = json::parse(f);
@@ -77,7 +80,10 @@ void Level1Scene::Load() {
     sp->getSprite().scale(Vector2f(0.4, 0.4));
       cout << "Done TEXTURE" << endl;
 
-    player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
+      //player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
+      player->addTag("player");
+    player->addComponent<AttackComponentPlayer>();
+      //player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
 
     auto h = player->addComponent<HealthComponentPlayer>();
 
@@ -115,7 +121,7 @@ void Level1Scene::Load() {
     {
         for(int i = 0; i < ls::findTiles('d').size(); i++) {
             auto doubleJump = makeEntity();
-            doubleJump->setPosition(ls::getTilePosition(ls::findTiles('d')[i]) + Vector2f(20, 0));
+            doubleJump->setPosition(ls::getTilePosition(ls::findTiles('d')[i]) + Vector2f(20, 20));
             cout << doubleJump->getPosition() << endl;
             //doubleJump->addComponent<DoubleJumpComponent>();
             auto s = doubleJump->addComponent<ShapeComponent>();
@@ -130,11 +136,17 @@ void Level1Scene::Load() {
   std::this_thread::sleep_for(std::chrono::milliseconds(3000));
   cout << " Scene 1 Load Done" << endl;
 
+    music.openFromFile("../../res/audio/music/background_music.wav");
+    music.play();
+    music.setVolume(music.getVolume() * 0.3);
+    music.setLoop(true);
+
   setLoaded(true);
 }
 
 void Level1Scene::UnLoad() {
   cout << "Scene 1 Unload" << endl;
+  music.stop();
   player.reset();
   ls::unload();
   Scene::UnLoad();
@@ -159,7 +171,10 @@ void Level1Scene::Update(const double& dt) {
     // check players position with double jump
     for(int i = 0; i < doubleJumps.size(); i++) {
         if (player->getPosition().x < doubleJumps[i]->getPosition().x + 5
-            && player->getPosition().x > doubleJumps[i]->getPosition().x - 5) {
+            && player->getPosition().x > doubleJumps[i]->getPosition().x - 5
+            && player->getPosition().y > doubleJumps[i]->getPosition().y - 5
+            && player->getPosition().y < doubleJumps[i]->getPosition().y + 5
+            && !player->get_components<PlayerPhysicsComponent>()[0]->_hasDoubleJump) {
             player->addComponent<DoubleJumpComponent>();
             player->get_components<PlayerPhysicsComponent>()[0]->_hasDoubleJump = true;
             cout << "DOUBLE JUMP GOT" << endl;
