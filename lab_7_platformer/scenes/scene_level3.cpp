@@ -1,6 +1,7 @@
 #include "scene_level3.h"
 #include "../components/cmp_physics.h"
 #include "../components/cmp_player_physics.h"
+#include "../components/cmp_player_attack.h"
 #include "../game.h"
 #include "../components/cmp_bullet.h"
 #include "../components/cmp_health_player.h"
@@ -14,6 +15,8 @@ using namespace std;
 using namespace sf;
 
 json player_data_3;
+
+sf::Music music_3;
 
 static shared_ptr<Entity> player;
 
@@ -36,12 +39,25 @@ void Level3Scene::Load() {
       player_data_3 = json::parse(f);
 
       player->setPosition(ls::getTilePosition(ls::findTiles(ls::START)[0]));
-      auto s = player->addComponent<ShapeComponent>();
-      s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
-      s->getShape().setFillColor(Color::Magenta);
-      s->getShape().setOrigin(Vector2f(10.f, 15.f));
+      //auto s = player->addComponent<ShapeComponent>();
+      //s->setShape<sf::RectangleShape>(Vector2f(20.f, 30.f));
+      //s->getShape().setFillColor(Color::Magenta);
+      //s->getShape().setOrigin(Vector2f(10.f, 15.f));
+
+      auto sp = player->addComponent<SpriteComponent>();
+      shared_ptr<sf::Texture> playerTexture;
+      playerTexture = make_shared<sf::Texture>();
+      cout << "TEXTURE 2" << endl;
+      if(!playerTexture->loadFromFile("../../res/sprites/player_sheet.png", sf::IntRect({40, 40}, {50, 100}))) {
+          cout << "ERROR" << endl;
+      }
+      sp->setTexure(playerTexture);
+      sp->getSprite().setOrigin(Vector2f(25.f, 65.f));
+      sp->getSprite().scale(Vector2f(0.4, 0.4));
 
       player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
+      player->addTag("player");
+      player->addComponent<AttackComponentPlayer>();
 
       auto h = player->addComponent<HealthComponentPlayer>();
 
@@ -66,12 +82,18 @@ void Level3Scene::Load() {
     // *********************************
   }
 
+    music_3.openFromFile("../../res/audio/music/background_music.wav");
+    music_3.play();
+    music_3.setVolume(music_3.getVolume() * 0.3);
+    music_3.setLoop(true);
+
   cout << " Scene 3 Load Done" << endl;
   setLoaded(true);
 }
 
 void Level3Scene::UnLoad() {
   cout << "Scene 3 UnLoad" << endl;
+  music_3.stop();
   player.reset();
   ls::unload();
   Scene::UnLoad();

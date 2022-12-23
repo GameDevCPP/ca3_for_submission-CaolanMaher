@@ -1,6 +1,7 @@
 {
     "attack_sound": "../../res/audio/sfx/slash.wav",
+    "weapon_image": "../../res/sword.png",
     "current_health": 100,
-    "current_level": 1,
+    "current_level": 2,
     "max_health": 100
 }

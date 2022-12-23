@@ -74,6 +74,7 @@ EnemyTurretComponent::EnemyTurretComponent(Entity* p)
     for (int i = 0; i < turret_data["bullet_count"]; i++) {
         auto bullet = _parent->scene->makeEntity();
         bullet->addComponent<BulletComponent>();
+        bullet->addComponent<HurtComponent>();
         auto s = bullet->addComponent<ShapeComponent>();
         s->setShape<sf::CircleShape>(8.f);
         s->getShape().setFillColor(Color::Red);

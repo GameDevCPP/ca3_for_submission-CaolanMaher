@@ -7,7 +7,6 @@ protected:
   b2Vec2 _size;
   sf::Vector2f _maxVelocity;
   bool _grounded;
-  bool _facingRight;
   float _groundspeed;
 
   bool isGrounded() const;
@@ -19,5 +18,6 @@ public:
 
   PlayerPhysicsComponent() = delete;
 
+    bool _facingRight;
     bool _hasDoubleJump = false;
 };
