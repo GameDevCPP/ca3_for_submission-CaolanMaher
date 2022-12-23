@@ -55,6 +55,11 @@ add_library(json INTERFACE)
 target_sources(json INTERFACE "${CMAKE_SOURCE_DIR}json/json.h")
 target_include_directories(json INTERFACE "${CMAKE_SOURCE_DIR}/json" INTERFACE ${SFML_INCS})
 
+## Sound lib
+add_library(lib_sound INTERFACE lib_sound/sound.h lib_sound/sound.cpp)
+target_sources(lib_sound INTERFACE "${CMAKE_SOURCE_DIR}lib_sound/sound.h")
+target_include_directories(lib_sound INTERFACE "${CMAKE_SOURCE_DIR}/lib_sound" INTERFACE ${SFML_INCS})
+
 # Image lib
 file(GLOB_RECURSE SOURCE_FILES lib_image/*.cpp lib_image/*.h)
 add_library(lib_image STATIC ${SOURCE_FILES} ${RESOURCE_FILES} lib_image/image.cpp lib_image/image.h)

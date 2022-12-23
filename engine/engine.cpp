@@ -168,6 +168,7 @@ void Scene::setLoaded(bool b) {
 
 void Scene::UnLoad() {
   ents.list.clear();
+  //cout << "SCENE UNLOADED" << endl;
   setLoaded(false);
 }
 

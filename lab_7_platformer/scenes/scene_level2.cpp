@@ -20,6 +20,8 @@ json player_data_2;
 
 sf::Music music_2;
 
+static vector<shared_ptr<Entity>> enemies;
+
 static shared_ptr<Entity> player;
 void Level2Scene::Load() {
   cout << "Scene 2 Load" << endl;
@@ -76,6 +78,8 @@ void Level2Scene::Load() {
     s->getShape().setFillColor(Color::Red);
     // Add EnemyAIComponent
     enemy->addComponent<EnemyAIComponent>();
+
+    enemies.push_back(enemy);
     // *********************************
   }
 
@@ -89,6 +93,8 @@ void Level2Scene::Load() {
     s->getShape().setFillColor(Color::Red);
     s->getShape().setOrigin(Vector2f(16.f, 16.f));
     turret->addComponent<EnemyTurretComponent>();
+
+    enemies.push_back(turret);
   }
 
   // Add physics colliders to level tiles.
@@ -105,7 +111,7 @@ void Level2Scene::Load() {
 
     music_2.openFromFile("../../res/audio/music/background_music.wav");
     music_2.play();
-    music_2.setVolume(music_2.getVolume() * 0.3);
+    music_2.setVolume(30.f);
     music_2.setLoop(true);
 
   cout << " Scene 2 Load Done" << endl;
@@ -117,6 +123,9 @@ void Level2Scene::UnLoad() {
   music_2.stop();
   player.reset();
   ls::unload();
+    for (int i = 0; i < enemies.size(); i++) {
+        enemies[i].reset();
+    }
   Scene::UnLoad();
 }
 
@@ -136,6 +145,25 @@ void Level2Scene::Update(const double& dt) {
 
   Scene::Update(dt);
   const auto pp = player->getPosition();
+
+  if(player->get_components<AttackComponentPlayer>()[0]->_isAttacking) {
+      for (int i = 0; i < enemies.size(); i++) {
+          auto enemy = enemies[i];
+
+          if (pp.x < enemy->getPosition().x + 30
+              && pp.x > enemy->getPosition().x - 30
+              && pp.y > enemy->getPosition().y - 30
+              && pp.y < enemy->getPosition().y + 30)
+              {
+              //cout << pp.y << " " << enemy->getPosition().y << endl;
+              cout << "HIT ENEMY" << endl;
+              //ents.list.erase(ents.list.begin() + 1 + i);
+              enemies.erase(enemies.begin() + i);
+              enemy->setForDelete();
+          }
+      }
+  }
+
   if (ls::getTileAt(pp) == ls::END) {
       player_data_2["current_health"] = player->get_components<HealthComponentPlayer>()[0]->getHealth();
       player_data_2["current_level"] = 3;
@@ -146,8 +174,10 @@ void Level2Scene::Update(const double& dt) {
       o << std::setw(4) << player_data_2 << std::endl;
 
     Engine::ChangeScene((Scene*)&level3);
+      return;
   } else if (!player->isAlive()) {
     Engine::ChangeScene((Scene*)&level2);
+      return;
   }
 }
 

@@ -5,9 +5,20 @@
 #ifndef GAMES_ENGINEERING_CMP_FLYING_ENEMY_H
 #define GAMES_ENGINEERING_CMP_FLYING_ENEMY_H
 
+#include "cmp_actor_movement.h"
 
-class cmp_flying_enemy {
 
+class FlyingEnemyComponent : public ActorMovementComponent {
+private:
+    sf::Vector2f _direction;
+    std::weak_ptr<Entity> _player;
+
+public:
+    void update(double dt) override;
+
+    explicit FlyingEnemyComponent(Entity* p);
+
+    FlyingEnemyComponent() = delete;
 };
 
 

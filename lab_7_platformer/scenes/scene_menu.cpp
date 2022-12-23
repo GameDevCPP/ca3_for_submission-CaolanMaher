@@ -2,6 +2,7 @@
 #include "../components/cmp_text.h"
 #include "../game.h"
 #include <SFML/Window/Keyboard.hpp>
+#include "../lib_sound/sound.h"
 #include <iostream>
 #include <fstream>
 #include "../../json/json.h"
@@ -19,6 +20,7 @@ void MenuScene::Load() {
     auto t = txt->addComponent<TextComponent>(
         "Platformer\nPress Space to Start");
   }
+
   setLoaded(true);
 }
 
