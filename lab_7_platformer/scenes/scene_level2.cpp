@@ -8,6 +8,7 @@
 #include "../components/cmp_health_player.h"
 #include "../components/cmp_flying_enemy.h"
 #include "../components/cmp_double_jump.h"
+#include "../components/cmp_adv_ground_enemy.h"
 #include "../game.h"
 #include <LevelSystem.h>
 #include <iostream>
@@ -30,6 +31,7 @@ void Level2Scene::Load() {
   cout << "Scene 2 Load" << endl;
   ls::loadLevelFile("../../res/level_2.txt", 40.0f);
   auto ho = Engine::getWindowSize().y - (ls::getHeight() * 40.f);
+  cout << "OFFSET" << ho << endl;
   ls::setOffset(Vector2f(0, ho));
 
   // Create player
@@ -69,25 +71,54 @@ void Level2Scene::Load() {
     cout << h->getHealth() << endl;
   }
 
-    // add flying enemy
-    cout << "LOADING FLYING ENEMY" << endl;
+    // add flying enemy or advanced ground enemy
+    //cout << "LOADING FLYING ENEMY" << endl;
     {
 
-        for(int i = 0; i < ls::findTiles('f').size(); i++) {
-            auto flyingEnemy = makeEntity();
-            flyingEnemy->setPosition(ls::getTilePosition(ls::findTiles('f')[i]) +
-                                     Vector2f(0, 7.5));
-            // *********************************
-            // Add HurtComponent
-            flyingEnemy->addComponent<HurtComponent>();
-            // Add ShapeComponent, Red 16.f Circle
-            auto s = flyingEnemy->addComponent<ShapeComponent>();
-            s->setShape<sf::CircleShape>(16.f);
-            s->getShape().setFillColor(Color::Red);
-            // Add EnemyAIComponent
-            //enemy->addComponent<EnemyAIComponent>();
-            flyingEnemy->addComponent<FlyingEnemyComponent>();
-            enemies.push_back(flyingEnemy);
+        if(player_data_2["is_hard_mode"] == true) {
+            cout << "LOADING FLYING ENEMY" << endl;
+            for (int i = 0; i < ls::findTiles('f').size(); i++) {
+                auto flyingEnemy = makeEntity();
+                flyingEnemy->setPosition(ls::getTilePosition(ls::findTiles('f')[i]) +
+                                         Vector2f(0, 7.5));
+                // *********************************
+                // Add HurtComponent
+                flyingEnemy->addComponent<HurtComponent>();
+                // Add ShapeComponent, Red 16.f Circle
+                auto s = flyingEnemy->addComponent<ShapeComponent>();
+                s->setShape<sf::CircleShape>(16.f);
+                s->getShape().setOrigin(Vector2f(8.f, 8.f));
+                s->getShape().setFillColor(Color::Red);
+                // Add EnemyAIComponent
+                //enemy->addComponent<EnemyAIComponent>();
+                flyingEnemy->addComponent<FlyingEnemyComponent>();
+                enemies.push_back(flyingEnemy);
+            }
+        }
+        else {
+            cout << "LOADING GROUND ENEMY" << endl;
+            for (int i = 0; i < ls::findTiles('a').size(); i++) {
+                auto advGroundEnemy = makeEntity();
+                advGroundEnemy->setPosition(ls::getTilePosition(ls::findTiles('a')[i]) +
+                                         Vector2f(0, 7.5));
+                // *********************************
+                //auto p = advGroundEnemy->addComponent<PhysicsComponent>(true, Vector2f(20.f, 20.f));
+                //p->setRestitution(.4f);
+                //p->setFriction(.0001f);
+                //p->impulse(Vector2f(-3.f, 0));
+                //p->setMass(1000000000.f);
+                // Add HurtComponent
+                advGroundEnemy->addComponent<HurtComponent>();
+                // Add ShapeComponent, Red 16.f Circle
+                auto s = advGroundEnemy->addComponent<ShapeComponent>();
+                s->setShape<sf::CircleShape>(16.f);
+                s->getShape().setOrigin(Vector2f(16.f, 0));
+                s->getShape().setFillColor(Color::Red);
+                // Add EnemyAIComponent
+                //enemy->addComponent<EnemyAIComponent>();
+                advGroundEnemy->addComponent<AdvGroundEnemyComponent>();
+                enemies.push_back(advGroundEnemy);
+            }
         }
 
         //for_each(v.begin(), v.end(), [](int i)

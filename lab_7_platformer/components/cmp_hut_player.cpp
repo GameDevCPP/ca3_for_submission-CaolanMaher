@@ -28,6 +28,7 @@ void HurtComponent::update(double dt) {
         _currentTime = _hurtCooldown;
 
         // play sound effect
+        hurtSound.setVolume(50.f);
         hurtSound.play();
 
         cout << "PLAYER HIT" << endl;
