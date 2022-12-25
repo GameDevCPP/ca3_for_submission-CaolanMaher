@@ -55,6 +55,11 @@ add_library(json INTERFACE)
 target_sources(json INTERFACE "${CMAKE_SOURCE_DIR}json/json.h")
 target_include_directories(json INTERFACE "${CMAKE_SOURCE_DIR}/json" INTERFACE ${SFML_INCS})
 
+## Sound lib
+add_library(lib_sound INTERFACE lib_sound/sound.h lib_sound/sound.cpp)
+target_sources(lib_sound INTERFACE "${CMAKE_SOURCE_DIR}lib_sound/sound.h")
+target_include_directories(lib_sound INTERFACE "${CMAKE_SOURCE_DIR}/lib_sound" INTERFACE ${SFML_INCS})
+
 # Image lib
 file(GLOB_RECURSE SOURCE_FILES lib_image/*.cpp lib_image/*.h)
 add_library(lib_image STATIC ${SOURCE_FILES} ${RESOURCE_FILES} lib_image/image.cpp lib_image/image.h)
@@ -84,7 +89,7 @@ file(GLOB_RECURSE SCENES lab_7_platformer/scenes/*.cpp practical_6_platformer/sc
 #add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES} lab_7_platformer/components/cmp_health_player.cpp lab_7_platformer/components/cmp_health_player.h lab_7_platformer/components/cmp_player_attack.cpp lab_7_platformer/components/cmp_player_attack.h)
 #add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES} lab_7_platformer/components/cmp_player_attack.cpp lab_7_platformer/components/cmp_player_attack.h)
 add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES} lab_7_platformer/components/cmp_health_player.cpp lab_7_platformer/components/cmp_health_player.h
-        lab_7_platformer/scenes/scene_level4.cpp lab_7_platformer/scenes/scene_level4.h lab_7_platformer/components/cmp_player_attack.cpp lab_7_platformer/components/cmp_player_attack.h lab_7_platformer/components/cmp_item.cpp lab_7_platformer/components/cmp_item.h lab_7_platformer/components/cmp_double_jump.cpp lab_7_platformer/components/cmp_double_jump.h lab_7_platformer/components/cmp_flying_enemy.cpp lab_7_platformer/components/cmp_flying_enemy.h)
+        lab_7_platformer/scenes/scene_level4.cpp lab_7_platformer/scenes/scene_level4.h lab_7_platformer/components/cmp_player_attack.cpp lab_7_platformer/components/cmp_player_attack.h lab_7_platformer/components/cmp_item.cpp lab_7_platformer/components/cmp_item.h lab_7_platformer/components/cmp_double_jump.cpp lab_7_platformer/components/cmp_double_jump.h lab_7_platformer/components/cmp_flying_enemy.cpp lab_7_platformer/components/cmp_flying_enemy.h lab_7_platformer/components/cmp_adv_ground_enemy.cpp lab_7_platformer/components/cmp_adv_ground_enemy.h lab_7_platformer/components/cmp_health_pickup.cpp lab_7_platformer/components/cmp_health_pickup.h)
 #add_executable(PRACTICAL_7_PLATFORMER ${SOURCES} ${RESOURCE_FILES})
 source_group("components" FILES ${CMPNTS})
 source_group("resources" FILES ${RESOURCE_FILES})

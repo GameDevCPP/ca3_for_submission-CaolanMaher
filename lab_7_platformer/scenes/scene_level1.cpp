@@ -4,6 +4,9 @@
 #include "../components/cmp_health_player.h"
 #include "../components/cmp_player_attack.h"
 #include "../components/cmp_double_jump.h"
+#include "../components/cmp_hurt_player.h"
+#include "../components/cmp_flying_enemy.h"
+#include "../components/cmp_enemy_turret.h"
 #include "../game.h"
 #include <LevelSystem.h>
 #include <iostream>
@@ -19,6 +22,7 @@ using namespace sf;
 
 static shared_ptr<Entity> player;
 static vector<shared_ptr<Entity>> doubleJumps;
+static vector<shared_ptr<Entity>> enemies;
 
 json player_data;
 
@@ -80,7 +84,7 @@ void Level1Scene::Load() {
     sp->getSprite().scale(Vector2f(0.4, 0.4));
       cout << "Done TEXTURE" << endl;
 
-      //player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
+      player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
       player->addTag("player");
     player->addComponent<AttackComponentPlayer>();
       //player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
@@ -96,6 +100,44 @@ void Level1Scene::Load() {
 
     //player_data["max_health"] = 500;
   }
+
+    // Create Turret
+    /*
+    {
+        auto turret = makeEntity();
+        turret->setPosition(ls::getTilePosition(ls::findTiles('t')[0]) +
+                            Vector2f(20, 0));
+        auto s = turret->addComponent<ShapeComponent>();
+        s->setShape<sf::CircleShape>(16.f, 3);
+        s->getShape().setFillColor(Color::Red);
+        s->getShape().setOrigin(Vector2f(16.f, 16.f));
+        turret->addComponent<EnemyTurretComponent>();
+
+        enemies.push_back(turret);
+    }
+     */
+
+  // create flying enemies
+  /*
+    {
+        for(int i = 0; i < ls::findTiles('f').size(); i++) {
+            auto flyingEnemy = makeEntity();
+            flyingEnemy->setPosition(ls::getTilePosition(ls::findTiles('f')[i]) +
+                                     Vector2f(0, 7.5));
+            // *********************************
+            // Add HurtComponent
+            flyingEnemy->addComponent<HurtComponent>();
+            // Add ShapeComponent, Red 16.f Circle
+            auto s = flyingEnemy->addComponent<ShapeComponent>();
+            s->setShape<sf::CircleShape>(16.f);
+            s->getShape().setFillColor(Color::Red);
+            // Add EnemyAIComponent
+            //enemy->addComponent<EnemyAIComponent>();
+            flyingEnemy->addComponent<FlyingEnemyComponent>();
+            enemies.push_back(flyingEnemy);
+        }
+    }
+    */
 
   //cout << "Player Health: " << player->get_components<HealthComponentPlayer>()[0]->getHealth() << endl;
 
@@ -138,7 +180,7 @@ void Level1Scene::Load() {
 
     music.openFromFile("../../res/audio/music/background_music.wav");
     music.play();
-    music.setVolume(music.getVolume() * 0.3);
+    music.setVolume(30.f);
     music.setLoop(true);
 
   setLoaded(true);
@@ -148,6 +190,14 @@ void Level1Scene::UnLoad() {
   cout << "Scene 1 Unload" << endl;
   music.stop();
   player.reset();
+    for(int i = 0; i < doubleJumps.size(); i++) {
+        doubleJumps[i].reset();
+    }
+    /*
+    for (int i = 0; i < enemies.size(); i++) {
+        enemies[i].reset();
+    }
+     */
   ls::unload();
   Scene::UnLoad();
 }
@@ -166,6 +216,8 @@ void Level1Scene::Update(const double& dt) {
     // center camera on player
     Engine::GetWindow().setView(view);
 
+    Scene::Update(dt);
+
     //cout << player->getPosition() << endl;
 
     // check players position with double jump
@@ -181,6 +233,40 @@ void Level1Scene::Update(const double& dt) {
         }
     }
 
+    const auto pp = player->getPosition();
+
+    // check if enemies are nearby while player attacking
+    /*
+    if(player->get_components<AttackComponentPlayer>()[0]->_isAttacking) {
+        for (int i = 0; i < enemies.size(); i++) {
+            auto enemy = enemies[i];
+
+            if (pp.x < enemy->getPosition().x + 30
+                && pp.x > enemy->getPosition().x - 30
+                && pp.y > enemy->getPosition().y - 30
+                && pp.y < enemy->getPosition().y + 30)
+            {
+                //cout << pp.y << " " << enemy->getPosition().y << endl;
+                cout << "HIT ENEMY" << endl;
+                //ents.list.erase(ents.list.begin() + 1 + i);
+                enemies.erase(enemies.begin() + i);
+                enemy->setForDelete();
+            }
+        }
+    }
+     */
+
+    /*
+    for(int i = 0; i < doubleJumps.size(); i++) {
+        if (player->getPosition() == ls::getTilePosition(ls::findTiles('d')[i])) {
+            player->addComponent<DoubleJumpComponent>();
+            player->get_components<PlayerPhysicsComponent>()[0]->_hasDoubleJump = true;
+            cout << "DOUBLE JUMP GOT" << endl;
+        }
+    }
+     */
+
+
   if (ls::getTileAt(player->getPosition()) == ls::END) {
 
       //player->get_components<HealthComponentPlayer>()[0]->setHealth(77);
@@ -194,8 +280,11 @@ void Level1Scene::Update(const double& dt) {
       o << std::setw(4) << player_data << std::endl;
 
     Engine::ChangeScene((Scene*)&level2);
+    return;
+  } else if (!player->isAlive()) {
+      Engine::ChangeScene((Scene*)&level1);
+      return;
   }
-  Scene::Update(dt);
 }
 
 void Level1Scene::Render() {

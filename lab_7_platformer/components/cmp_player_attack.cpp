@@ -39,6 +39,7 @@ void AttackComponentPlayer::update(double dt) {
     if(Keyboard::isKeyPressed(Keyboard::Z) && !_isAttacking) {
         // attack
         _isAttacking = true;
+        _currentTime = _attackTime;
         //swordSprite.setPosition({_player.lock()->getPosition().x + 10, _player.lock()->getPosition().y - 20});
 
         // play sound effect
@@ -58,11 +59,11 @@ void AttackComponentPlayer::update(double dt) {
     if (Keyboard::isKeyPressed(Keyboard::Right)) {
         //if(_isAttacking) {
             if (_player.lock()->get_components<PlayerPhysicsComponent>()[0]->_facingRight) {
-                std::cout << "Player facing right and pressing right" << std::endl;
+                //std::cout << "Player facing right and pressing right" << std::endl;
                 swordSprite.scale({1, 1});
                 //swordSprite.setPosition({_player.lock()->getPosition().x + 10, _player.lock()->getPosition().y - 20});
             } else {
-                std::cout << "Player facing left and pressing right" << std::endl;
+                //std::cout << "Player facing left and pressing right" << std::endl;
                 swordSprite.scale({-1, 1});
                 //swordSprite.setPosition({_player.lock()->getPosition().x + 10, _player.lock()->getPosition().y - 20});
             }
@@ -71,11 +72,11 @@ void AttackComponentPlayer::update(double dt) {
     else if(Keyboard::isKeyPressed(Keyboard::Left)) {
         //if(_isAttacking) {
             if (_player.lock()->get_components<PlayerPhysicsComponent>()[0]->_facingRight) {
-                std::cout << "Player facing right and pressing left" << std::endl;
+                //std::cout << "Player facing right and pressing left" << std::endl;
                 swordSprite.scale({-1, 1});
                 //swordSprite.setPosition({_player.lock()->getPosition().x - 10, _player.lock()->getPosition().y - 20});
             } else {
-                std::cout << "Player facing left and pressing left" << std::endl;
+                //std::cout << "Player facing left and pressing left" << std::endl;
                 swordSprite.scale({1, 1});
                 //swordSprite.setPosition({_player.lock()->getPosition().x - 10, _player.lock()->getPosition().y - 20});
             }

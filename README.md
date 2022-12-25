@@ -1,35 +1,245 @@
-# Drop-Pod-Game
-C++ game for games engineering coursework.
+# Wizard Strike Game
 
-## Installation
+The video of the demo of the game can be found here:
 
-### Itch.io
-If you are wanting to just play the game without having to get the repo visit our Itch.Io page and follow the instructions there. https://stoketheflame.itch.io/drop-pod
+This GDD is split into 2 parts: a general GDD which handles overall view of the game and its features,
+and the technical GDD which goes into details on certain aspects such as components
 
-### Download Repo
-If starting on a new computer or redownloading the repo from scratch and lib/sfml and/or lib/b2d is empty. Open git bash shell in drop-pod-game directory and run command:
+# General GDD
 
-git submodule update --init --recursive
+## Introduction
 
-This will download the submodules for the project.
-To check if that has worked correctly run command:
+This game is Wizard Strike, a 2D platformer and side-scroller where the player must escape
+their prison by fighting their way through many enemies. The game uses sprites, physics,
+collision detection, AI, tiled levels and more.
 
-git submodule status
+## Technology
 
-Results should show:
+### Platforms
 
+- PC
 
-Then compile with CMake. This will show an error for developers just ignore.
+### Game Engine / Software Library
 
-CMake Warning (dev) at C:/Program Files/CMake/share/cmake-3.22/Modules/FindPackageHandleStandardArgs.cmake:438 (message):
-  The package name passed to `find_package_handle_standard_args` (VORBIS)
-  does not match the name of the calling package (Vorbis).  This can lead to
-  problems in calling code that expects `find_package` result variables
-  (e.g., `_FOUND`) to follow a certain pattern.
-Call Stack (most recent call first):
-  lib/sfml/cmake/Modules/FindVorbis.cmake:25 (find_package_handle_standard_args)
-  lib/sfml/cmake/Macros.cmake:279 (find_package)
-  lib/sfml/src/SFML/Audio/CMakeLists.txt:70 (sfml_find_package)
-This warning is for project developers.  Use -Wno-dev to suppress it.
+- SFML
+- JSON Library
+- Image Reading Library
+- Sound Library
 
-IGNORE THIS IT SHOULD STILL COMPILE.
+SFML is used for all the graphics and audio in the game, it handles all the drawing and creation of
+objects.
+
+JSON is used to read in constant values such as a path to a file, the players max health, an enemies bullet count etc.
+
+Image Reading is a library that was attempted to read in bmp images and use them to create the levels.
+
+Sound is a library that was attempted to be a global access for all the audio in the game.
+
+## Objective
+
+The player plays as a wizard who is trying to escape a prison. In order to survive, the player must either dodge
+enemies or kill them with their sword and make to the end of the level to progress.
+
+If the player is hit by an enemy, they will take damage, if the player takes enough damage, they will die and the current
+level will be reloaded.
+
+The player can kill enemies by attacking and getting close to them with their sword.
+
+## Gameplay
+
+The game is a side-scrolling platformer, so the player can run left and right, they can jump, they can attack, they can pick up
+items to get abilities or gain health for example.
+
+The player starts off with 100 health points at each level. If the player is hit by an enemy, they will lose 25 hit points.
+If the player drops to 0 health points, they will die and the level will be reloaded.
+
+The following pickups and their abilites are listed here:
+
+- Double Jump - gives the player a single use of an extra powerful jump
+- Health - gives the player 50 more health points (up to 100 health points).
+
+There are 4 different enemies in the game:
+
+- Ground Enemy - goes left to right in a given path
+- Flying Enemy - follows the player around in the air and can travel through walls
+- Turret - shoots bullets in a given area
+- Advanced Ground Enemy - travels along the ground but follows the player as long as there is no obstacles
+
+Both the Flying enemy and the Advanced Ground Enemy follow the player by comparing the players position to their own position.
+For example, for the Flying Enemy, if the player is above them, the enemy will travel up, if the player is to the right of them, the
+enemy will travel right, resulting in the player being constantly followed.
+
+There is also a hazard in the game:
+
+- Falling Rocks - these fall over areas that if are hit, will block the player from advancing
+
+There are 2 difficulty modes: easy and hard.
+
+The player is given a choice of what difficulty to play at when the menu is loaded. If the player picks the easy difficulty,
+every enemy type will spawn except the Advanced Ground Enemy. If the player chooses easy, every enemy type will spawn
+except the Flying Enemy.
+
+The game also features saving and loading, the game keeps track of what level the player is playing on, so if the player quits and comes back,
+they will spawn in the level where they stopped playing. When the menu loads, the player is given a choice of either starting a new game, or
+continuing from where they left off. This feature is handled by using a JSON file to capture and save what level the player is on.
+Once the player loads into the game, the game will load whatever level the JSON has saved.
+
+## Levels
+
+The game features 3 levels, each level introduces new components:
+
+- Level 1 - This level introduces the player to the controls, they can get a feel for the game. This level also introduces the player to the double jump pickup
+- Level 2 - This level introduces the player to different enemies such as the Flying Enemy, Ground Enemy, and the Turret. The player can attack these enemies to kill them so they can advance.
+- Level 3 - This level introduces the rock hazard to the player. There are also enemies that the player must kill to advance.
+
+Each level is procedurally generated by a text file filled with different characters that represent spawn points for different tiles and enemies.
+There was an attempt to change this using a library that would load in images but this lead to difficulties which lead to the feature being left.
+The library code is still there to be examined.
+
+These are the characters in each text file:
+
+- w - means a tile the player can walk on
+- ' ' - empty space means nothing will be spawned here
+- s - marks the players spawn point
+- e - marks the end where the player advances to the next level
+- f - marks where the flying enemies spawn
+- d - marks where the double jump pickup spawns
+- h - marks where the health pickup spawns
+- a - marks where the advanced ground enemy spawns
+- n - marks where the ground enemy spawns
+- t - marks where the turret spawns
+
+When each level is unloaded, all pointers are reset to manage the memory
+
+## Controls
+
+The game is controlled using the keyboard only
+
+The controls are listed as follows:
+
+- Left Arrow - move the player left (game)
+- Right Arrow - move the player right (game)
+- Up Arrow - make the player jump (game)
+- Z - attack (game)
+- E - set game difficulty to easy (menu)
+- H - set game difficulty to hard (menu)
+- Space - start a new game (menu)
+- Enter - load in current save (menu)
+- Escape - close the game
+
+## GUI
+
+At the beginning of the game, the player is presented with a few options in text.
+They can set the difficulty to easy or hard by pressing E or H respectively.
+They can start a new game or load in their current save by pressing Space or Enter respectively.
+
+## Artwork
+
+There are two pieces of artwork used in the game. There is a sprite for the player (wizard) and the sword the player uses.
+The wizard sprite sheet was found here: https://www.deviantart.com/mackieftw/art/Simple-2D-Mage-Sprite-sheet-510904642 
+The sword image was found here: https://en.wikipedia.org/wiki/File:Sword_Pixel_art_-_Radin.png 
+
+The sprite for the player was implemented using the Sprite Component which uses a shared pointer of a texture and a shared pointer of a sprite
+
+## Sound (Sound Effects) / Music
+
+The game features background music and sound effects for attacking and for the player being hit.
+All sounds for the game were gotten through https://freesound.org/ 
+
+The sounds are managed using SFML, the background music uses a Music object which is then looped during levels. The sound effects use Buffers 
+and Sound objects and are played when certain events happen e.g the hit sound effect plays when the player is hit by an enemy
+
+There is one track for the background music which loops throughout each level
+
+# Technical GDD
+
+## Moodle Wiki
+
+My contributions to the Moodle Wiki can be found here: https://moodle.wit.ie/mod/wiki/view.php?pageid=1092 
+
+## Components
+
+There were new components added into the base version of the project:
+
+cmp_item - this is a new family tree of components for pickups
+
+cmp_double_jump - this is a child of the item component, it is the double jump component, it spawns in a level and when picked up it activates a boolean in the physics component. When this boolean is active, the player's next jump is twice as strong, then the boolean is set to false until the player picks it up again
+
+cmp_health_pickup - this is a child of the item component, it is the health pickup component, it spawns in a level and when picked up it gives the player 50 health points (up to 100)
+
+cmp_health - this is the health component, it keeps track of the players health, it interacts with the hurt component so that when a player is hit, they lose 25 health points, if the players health drops to 0, they die and the level is reloaded
+
+cmp_flying_enemy - this is a child of the actor component, this is a flying enemy AI component, it tracks the player through the air and follows them, it can travel through walls
+
+cmp_adv_ground_enemy - this is a child of the actor component, this is the advanced ground enemy AI component, it follows the player but stays on the ground
+
+cmp_player_attack - this component allows the player to attack enemies with their sword, when the player attacks, their sword will appear in front of them, if any enemy comes into contact with the player, the enemy will die and be deleted
+
+Some existing components were also modified to contain new features:
+
+cmp_enemy_turret - this enemy AI now features object pooling, when the turret is created, 5 bullets with shared pointers are created and added to a vector of bullets, each bullet has a lifetime of 5 seconds,
+each bullet has a boolean of if they are available to be fired or not. When the turret wants to fire a bullet, it goes through the bullet vector and picks the first bullet that is available to fire.
+This bullets position is set to the turrets position and then fired and set to not be available for the next 5 seconds. This is much more efficient as now a new bullet isnt created whenever the turret fires, it recycles
+bullets now.
+
+cmp_player_physics - this physics component was edited to help make the player face the right direction, so now the players sprite will flip if needed when changing direction
+
+cmp_hurt_player - this component no longer resets the level when the player is hit, now it works with the health component to take health from the player after they've been hit, the player only dies when their health drops to 0
+
+## Design Pattern
+
+From research, it was found that object pooling is a design pattern, implementing the object pooling for the enemy turret is an example of using a new design pattern by recycling already created objects rather than creating new objects every time.
+
+Inheritance is also a design pattern, the new component tree with items is an example of inheritance as code is not repeated throughout similar objects, it is stored in one parent object and accessed by the children.
+
+## Libraries
+
+### JSON
+
+JSON was implemented into this project using the following repo and .h file https://github.com/nlohmann/json/blob/develop/single_include/nlohmann/json.hpp 
+
+This library is able to parse and updated JSON files. Using this we can use JSON files to store constants such as file paths and variables
+
+JSON is used in the project in the following ways:
+
+- Player - player variables such as their max health, current health, sprite file paths, and the current level the player is on are stored in the players JSON. This data is accessed in each level and assigned to variables to be used. At the end of each level, the variables such as the current level are updated in the JSON and act as a save file
+- Audio - sound effect and background music file paths are stored in the audio JSON file for easy access when sound effects or music are needed in each level
+- Enemy - constants such as the number of bullets to create for the turret and those bullets lifetimes are store and accessed in the enemies JSON file
+
+### Image Loader
+
+An Image Loader library was attempted to replace the text file level loader. Unfortunately its implementation was unsuccessful but its code is available to review.
+
+It worked by loading in a .bmp image, it would loop through each pixel in the image and access the bytes in the pixel which represented the bgr values of the pixel 
+e.g a pixel would have 3 bytes such as 255 255 255 meaning the pixel was white, it would then flip these values to be rgb rather than bgr, it would then look at the colour of the pixel and depending on the colour, 
+it would assign it a value from an enum e.g if the pixel was white, it would be assigned the enum of EMPTY meaning nothing should spawn here.
+this enum value would then be added to a vector of tiles where it would then be fed into the level system to build the tiles from the tiles vector
+
+### Sound System
+
+A Sound System was attempted to be implemented to be a global resource for all audio in the game. Unfortunately its implementation was unsuccessful but its code is available to review.
+
+It worked by loading in all necessary audio files when it was created, and then it could play an audio track by calling its play() function while supplying it with the name of the sound to play.
+It would then access and play the right sound based on the input of the function.
+
+## Memory Management
+
+Memory management practices were carried out in this project, almost all objects made are made using shared or unique pointers, these pointers are used for fast access to objects and their variables or functions
+
+When objects are destroyed, for example if a level is unloaded, the pointers attached to objects are reset or destroyed
+
+Object pooling is also a method of memory management used in the project by the enemy turret, rather than constantly creating and destroying an object we just recycle it.
+
+## Advanced C++
+
+This project was developed using features introduced in c++ 17 and above.
+
+Some features include:
+
+- The "likely" keyword for switch statements, this tells the compiler which part of a switch statement is the most likely to be access, the compiler can then pre-emptively have this part ready to be run
+- The "maybe unused" keyword, this negates warnings on variables that the compiler thinks are not being used but its existence may be necessary for other parts
+
+## Project Management
+
+This project was managed using Trello, the board can be accessed here: https://trello.com/b/PtgIg74s/c-platformer 
+This project was managed using milestones that can be seen on the Trello board

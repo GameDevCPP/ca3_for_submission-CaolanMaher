@@ -5,6 +5,10 @@
 #include "../game.h"
 #include "../components/cmp_bullet.h"
 #include "../components/cmp_health_player.h"
+#include "../components/cmp_flying_enemy.h"
+#include "../components/cmp_double_jump.h"
+#include "../components/cmp_adv_ground_enemy.h"
+#include "../components/cmp_health_pickup.h"
 #include <LevelSystem.h>
 #include <iostream>
 #include <fstream>
@@ -22,6 +26,8 @@ sf::Music music_3;
 
 static shared_ptr<Entity> player;
 static vector<shared_ptr<Entity>> doubleJumps;
+static vector<shared_ptr<Entity>> healthPickups;
+static vector<shared_ptr<Entity>> enemies;
 
 void Level3Scene::Load() {
   cout << "Scene 3 Load" << endl;
@@ -58,9 +64,9 @@ void Level3Scene::Load() {
       sp->getSprite().setOrigin(Vector2f(25.f, 65.f));
       sp->getSprite().scale(Vector2f(0.4, 0.4));
 
-      player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
       player->addTag("player");
       player->addComponent<AttackComponentPlayer>();
+      player->addComponent<PlayerPhysicsComponent>(Vector2f(20.f, 30.f));
 
       auto h = player->addComponent<HealthComponentPlayer>();
 
@@ -85,22 +91,67 @@ void Level3Scene::Load() {
         }
     }
 
+    // add health item
+    cout << "LOADING HEALTH ITEM" << endl;
+    {
+        for(int i = 0; i < ls::findTiles('h').size(); i++) {
+            auto healthPickup = makeEntity();
+            healthPickup->setPosition(ls::getTilePosition(ls::findTiles('h')[i]) + Vector2f(20, 20));
+            cout << healthPickup->getPosition() << endl;
+            //doubleJump->addComponent<DoubleJumpComponent>();
+            auto s = healthPickup->addComponent<ShapeComponent>();
+            s->setShape<sf::CircleShape>(10.f);
+            s->getShape().setFillColor(Color::Green);
+            s->getShape().setOrigin(Vector2f(10.f, 10.f));
+            healthPickups.push_back(healthPickup);
+        }
+    }
+
     // add flying enemy
     cout << "LOADING FLYING ENEMY" << endl;
     {
-        for(int i = 0; i < ls::findTiles('f').size(); i++) {
-            auto flyingEnemy = makeEntity();
-            flyingEnemy->setPosition(ls::getTilePosition(ls::findTiles('f')[i]) +
-                               Vector2f(0, 7.5));
-            // *********************************
-            // Add HurtComponent
-            flyingEnemy->addComponent<HurtComponent>();
-            // Add ShapeComponent, Red 16.f Circle
-            auto s = flyingEnemy->addComponent<ShapeComponent>();
-            s->setShape<sf::CircleShape>(16.f);
-            s->getShape().setFillColor(Color::Red);
-            // Add EnemyAIComponent
-            //enemy->addComponent<EnemyAIComponent>();
+        if(player_data_3["is_hard_mode"] == true) {
+            for (int i = 0; i < ls::findTiles('f').size(); i++) {
+                auto flyingEnemy = makeEntity();
+                flyingEnemy->setPosition(ls::getTilePosition(ls::findTiles('f')[i]) +
+                                         Vector2f(0, 7.5));
+                // *********************************
+                // Add HurtComponent
+                flyingEnemy->addComponent<HurtComponent>();
+                // Add ShapeComponent, Red 16.f Circle
+                auto s = flyingEnemy->addComponent<ShapeComponent>();
+                s->setShape<sf::CircleShape>(16.f);
+                s->getShape().setOrigin(Vector2f(8.f, 8.f));
+                s->getShape().setFillColor(Color::Red);
+                // Add EnemyAIComponent
+                //enemy->addComponent<EnemyAIComponent>();
+                flyingEnemy->addComponent<FlyingEnemyComponent>();
+                enemies.push_back(flyingEnemy);
+            }
+        }
+        else {
+            for (int i = 0; i < ls::findTiles('a').size(); i++) {
+                auto advGroundEnemy = makeEntity();
+                advGroundEnemy->setPosition(ls::getTilePosition(ls::findTiles('a')[i]) +
+                                            Vector2f(0, 7.5));
+                // *********************************
+                //auto p = advGroundEnemy->addComponent<PhysicsComponent>(true, Vector2f(20.f, 20.f));
+                //p->setRestitution(.4f);
+                //p->setFriction(.0001f);
+                //p->impulse(Vector2f(-3.f, 0));
+                //p->setMass(1000000000.f);
+                // Add HurtComponent
+                advGroundEnemy->addComponent<HurtComponent>();
+                // Add ShapeComponent, Red 16.f Circle
+                auto s = advGroundEnemy->addComponent<ShapeComponent>();
+                s->setShape<sf::CircleShape>(16.f);
+                s->getShape().setOrigin(Vector2f(16.f, 0));
+                s->getShape().setFillColor(Color::Red);
+                // Add EnemyAIComponent
+                //enemy->addComponent<EnemyAIComponent>();
+                advGroundEnemy->addComponent<AdvGroundEnemyComponent>();
+                enemies.push_back(advGroundEnemy);
+            }
         }
     }
 
@@ -122,7 +173,7 @@ void Level3Scene::Load() {
 
     music_3.openFromFile("../../res/audio/music/background_music.wav");
     music_3.play();
-    music_3.setVolume(music_3.getVolume() * 0.3);
+    music_3.setVolume(30.f);
     music_3.setLoop(true);
 
   cout << " Scene 3 Load Done" << endl;
@@ -133,6 +184,18 @@ void Level3Scene::UnLoad() {
   cout << "Scene 3 UnLoad" << endl;
   music_3.stop();
   player.reset();
+    for(int i = 0; i < doubleJumps.size(); i++) {
+        doubleJumps[i].reset();
+    }
+    doubleJumps.clear();
+    for (int i = 0; i < enemies.size(); i++) {
+        enemies[i].reset();
+    }
+    enemies.clear();
+    for(int i = 0; i < healthPickups.size(); i++) {
+        healthPickups[i].reset();
+    }
+    healthPickups.clear();
   ls::unload();
   Scene::UnLoad();
 }
@@ -156,10 +219,61 @@ void Level3Scene::Update(const double& dt) {
   Scene::Update(dt);
   const auto pp = player->getPosition();
   if (ls::getTileAt(pp) == ls::END) {
-    Engine::ChangeScene((Scene*)&level4);
+    //Engine::ChangeScene((Scene*)&level4);
+    return;
   } else if (!player->isAlive()) {
     Engine::ChangeScene((Scene*)&level3);
+    return;
   }
+
+    if(player->get_components<AttackComponentPlayer>()[0]->_isAttacking) {
+        for (int i = 0; i < enemies.size(); i++) {
+            auto enemy = enemies[i];
+
+            if (pp.x < enemy->getPosition().x + 30
+                && pp.x > enemy->getPosition().x - 30
+                && pp.y > enemy->getPosition().y - 30
+                && pp.y < enemy->getPosition().y + 30)
+            {
+                //cout << pp.y << " " << enemy->getPosition().y << endl;
+                cout << "HIT ENEMY" << endl;
+                //ents.list.erase(ents.list.begin() + 1 + i);
+                enemies.erase(enemies.begin() + i);
+                enemy->setForDelete();
+            }
+        }
+    }
+
+    // check players position with double jump
+    for(int i = 0; i < doubleJumps.size(); i++) {
+        if (player->getPosition().x < doubleJumps[i]->getPosition().x + 5
+            && player->getPosition().x > doubleJumps[i]->getPosition().x - 5
+            && player->getPosition().y > doubleJumps[i]->getPosition().y - 5
+            && player->getPosition().y < doubleJumps[i]->getPosition().y + 5
+            && !player->get_components<PlayerPhysicsComponent>()[0]->_hasDoubleJump) {
+            player->addComponent<DoubleJumpComponent>();
+            player->get_components<PlayerPhysicsComponent>()[0]->_hasDoubleJump = true;
+            cout << "DOUBLE JUMP GOT" << endl;
+        }
+    }
+
+    // check players position with health Pickup
+    for(int i = 0; i < healthPickups.size(); i++) {
+        if (player->getPosition().x < healthPickups[i]->getPosition().x + 5
+            && player->getPosition().x > healthPickups[i]->getPosition().x - 5
+            && player->getPosition().y > healthPickups[i]->getPosition().y - 5
+            && player->getPosition().y < healthPickups[i]->getPosition().y + 5) {
+            player->addComponent<HealthPickupComponent>();
+            auto h = player->get_components<HealthComponentPlayer>()[0];
+            h->setHealth(h->getHealth() + 50);
+            if(h->getHealth() > 100) {
+                h->setHealth(100);
+            }
+            healthPickups.erase(healthPickups.begin() + i);
+            healthPickups[i]->setForDelete();
+            cout << "HEALTH ADDED" << endl;
+        }
+    }
 
   static float rocktime_1 = 0.0f;
   rocktime_1 -= dt;
@@ -197,7 +311,7 @@ void Level3Scene::Update(const double& dt) {
         auto p = rock_2->addComponent<PhysicsComponent>(true, Vector2f(75.f, 75.f));
         p->setRestitution(.4f);
         p->setFriction(.0001f);
-        p->impulse(Vector2f(-3.f, 0));
+        p->impulse(Vector2f(0, 0));
         p->setMass(1000000000.f);
     }
   

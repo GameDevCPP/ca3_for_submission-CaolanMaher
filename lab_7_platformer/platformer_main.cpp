@@ -23,6 +23,11 @@ int main() {
 
     //ls::loadLevelFile("../../res/levels/newTest.bmp");
 
+    //std::string path = "background";
+
+    //SoundSystem::start("../../res/audio/music/background_music.wav");
+    //SoundSystem::playAudio(path.c_str());
+
 
   Engine::Start(1280, 720, "Platformer",&menu);
 }

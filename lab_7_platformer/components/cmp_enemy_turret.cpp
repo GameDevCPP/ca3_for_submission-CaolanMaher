@@ -44,9 +44,9 @@ void EnemyTurretComponent::fire() const {
             //bullet->get_components<BulletComponent>()[0]->_isAvailable = false;
             //cout << "SHOOTING " << i << endl;
             bullet->setPosition(_parent->getPosition());
-            auto p = bullet->addComponent<PhysicsComponent>(true, Vector2f(8.f, 8.f));
-            p->setRestitution(.4f);
-            p->setFriction(.005f);
+            //auto p = bullet->addComponent<PhysicsComponent>(true, Vector2f(8.f, 8.f));
+            auto p = bullet->get_components<PhysicsComponent>()[0];
+            p->teleport(_parent->getPosition());
             p->impulse(sf::rotate(Vector2f(0, 15.f), -_parent->getRotation()));
             //bullet->get_components<PhysicsComponent>()[0]->setRestitution(.4f);
             //bullet->get_components<PhysicsComponent>()[0]->setFriction(.005f);
@@ -79,9 +79,9 @@ EnemyTurretComponent::EnemyTurretComponent(Entity* p)
         s->setShape<sf::CircleShape>(8.f);
         s->getShape().setFillColor(Color::Red);
         s->getShape().setOrigin(Vector2f(8.f, 8.f));
-        //auto p = bullet->addComponent<PhysicsComponent>(true, Vector2f(8.f, 8.f));
-        //p->setRestitution(.4f);
-        //p->setFriction(.005f);
+        auto p = bullet->addComponent<PhysicsComponent>(true, Vector2f(8.f, 8.f));
+        p->setRestitution(.4f);
+        p->setFriction(.005f);
         //bullet->get_components<BulletComponent>()[0]->_isAvailable = true;
         _bullets.push_back(bullet);
     }

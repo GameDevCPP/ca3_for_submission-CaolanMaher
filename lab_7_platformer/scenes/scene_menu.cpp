@@ -2,6 +2,7 @@
 #include "../components/cmp_text.h"
 #include "../game.h"
 #include <SFML/Window/Keyboard.hpp>
+#include "../lib_sound/sound.h"
 #include <iostream>
 #include <fstream>
 #include "../../json/json.h"
@@ -17,8 +18,19 @@ void MenuScene::Load() {
   {
     auto txt = makeEntity();
     auto t = txt->addComponent<TextComponent>(
-        "Platformer\nPress Space to Start");
+        "Wizard Strike");
+
+    auto difficultyTxt = makeEntity();
+    auto tx = difficultyTxt->addComponent<TextComponent>(
+            "Press E for Easy Mode | Press H for Hard Mode");
+    difficultyTxt->setPosition(Vector2f(500, 500));
+
+    auto saveTxt = makeEntity();
+    auto stxt = saveTxt->addComponent<TextComponent>(
+            "Press Space to start a new game | Press Enter to Load saved game");
+    saveTxt->setPosition(Vector2f(0, 1000));
   }
+
   setLoaded(true);
 }
 
@@ -29,7 +41,31 @@ void MenuScene::Update(const double& dt) {
     std::ifstream f("../../res/data/player_data.json");
     player_data_menu = json::parse(f);
 
-  if (sf::Keyboard::isKeyPressed(Keyboard::Space)) {
+    if(sf::Keyboard::isKeyPressed(Keyboard::E)) {
+        //isHardMode = false;
+        player_data_menu["is_hard_mode"] = false;
+
+        // update players json data with current data
+        std::ofstream o("../../res/data/player_data.json");
+
+        o << std::setw(4) << player_data_menu << std::endl;
+    }
+
+    if(sf::Keyboard::isKeyPressed(Keyboard::H)) {
+        //isHardMode = true;
+        player_data_menu["is_hard_mode"] = true;
+
+        // update players json data with current data
+        std::ofstream o("../../res/data/player_data.json");
+
+        o << std::setw(4) << player_data_menu << std::endl;
+    }
+
+    if(sf::Keyboard::isKeyPressed(Keyboard::Space)) {
+        Engine::ChangeScene(&level1);
+    }
+
+  if (sf::Keyboard::isKeyPressed(Keyboard::Enter)) {
       if(player_data_menu["current_level"] == 1) {
           Engine::ChangeScene(&level1);
       }

@@ -11,6 +11,7 @@
 class DoubleJumpComponent : public ItemComponent {
 private:
     int amountOfJumps;
+    std::weak_ptr<Entity> _player;
 
 public:
     void update(double dt) override;

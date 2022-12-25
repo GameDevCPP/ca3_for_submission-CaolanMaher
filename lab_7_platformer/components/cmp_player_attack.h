@@ -15,7 +15,7 @@ private:
     sf::SoundBuffer slashBuffer;
     sf::Sound slashSound;
     std::weak_ptr<Entity> _player;
-    bool _isAttacking = false;
+    //bool _isAttacking = false;
     float _attackTime = 1.f;
     float _currentTime;
     sf::Texture swordTexture;
@@ -30,6 +30,8 @@ public:
 
     void update(double dt) override;
     void render() override;
+
+    bool _isAttacking = false;
 };
 
 
