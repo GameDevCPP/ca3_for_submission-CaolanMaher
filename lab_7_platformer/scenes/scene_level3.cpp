@@ -8,6 +8,7 @@
 #include "../components/cmp_flying_enemy.h"
 #include "../components/cmp_double_jump.h"
 #include "../components/cmp_adv_ground_enemy.h"
+#include "../components/cmp_health_pickup.h"
 #include <LevelSystem.h>
 #include <iostream>
 #include <fstream>
@@ -25,6 +26,7 @@ sf::Music music_3;
 
 static shared_ptr<Entity> player;
 static vector<shared_ptr<Entity>> doubleJumps;
+static vector<shared_ptr<Entity>> healthPickups;
 static vector<shared_ptr<Entity>> enemies;
 
 void Level3Scene::Load() {
@@ -86,6 +88,22 @@ void Level3Scene::Load() {
             s->getShape().setFillColor(Color::Yellow);
             s->getShape().setOrigin(Vector2f(10.f, 10.f));
             doubleJumps.push_back(doubleJump);
+        }
+    }
+
+    // add health item
+    cout << "LOADING HEALTH ITEM" << endl;
+    {
+        for(int i = 0; i < ls::findTiles('h').size(); i++) {
+            auto healthPickup = makeEntity();
+            healthPickup->setPosition(ls::getTilePosition(ls::findTiles('h')[i]) + Vector2f(20, 20));
+            cout << healthPickup->getPosition() << endl;
+            //doubleJump->addComponent<DoubleJumpComponent>();
+            auto s = healthPickup->addComponent<ShapeComponent>();
+            s->setShape<sf::CircleShape>(10.f);
+            s->getShape().setFillColor(Color::Green);
+            s->getShape().setOrigin(Vector2f(10.f, 10.f));
+            healthPickups.push_back(healthPickup);
         }
     }
 
@@ -174,6 +192,10 @@ void Level3Scene::UnLoad() {
         enemies[i].reset();
     }
     enemies.clear();
+    for(int i = 0; i < healthPickups.size(); i++) {
+        healthPickups[i].reset();
+    }
+    healthPickups.clear();
   ls::unload();
   Scene::UnLoad();
 }
@@ -232,6 +254,24 @@ void Level3Scene::Update(const double& dt) {
             player->addComponent<DoubleJumpComponent>();
             player->get_components<PlayerPhysicsComponent>()[0]->_hasDoubleJump = true;
             cout << "DOUBLE JUMP GOT" << endl;
+        }
+    }
+
+    // check players position with health Pickup
+    for(int i = 0; i < healthPickups.size(); i++) {
+        if (player->getPosition().x < healthPickups[i]->getPosition().x + 5
+            && player->getPosition().x > healthPickups[i]->getPosition().x - 5
+            && player->getPosition().y > healthPickups[i]->getPosition().y - 5
+            && player->getPosition().y < healthPickups[i]->getPosition().y + 5) {
+            player->addComponent<HealthPickupComponent>();
+            auto h = player->get_components<HealthComponentPlayer>()[0];
+            h->setHealth(h->getHealth() + 50);
+            if(h->getHealth() > 100) {
+                h->setHealth(100);
+            }
+            healthPickups.erase(healthPickups.begin() + i);
+            healthPickups[i]->setForDelete();
+            cout << "HEALTH ADDED" << endl;
         }
     }
 
