@@ -10,7 +10,7 @@
 
 class ItemComponent : public Component {
 private:
-    int item_duration;
+    [[maybe_unused]] int item_duration;
     int effect;
     std::weak_ptr<Entity> _player;
     //enum EFFECT {

@@ -171,8 +171,9 @@ void Level3Scene::Load() {
     // *********************************
   }
 
-    music_3.openFromFile("../../res/audio/music/background_music.wav");
-    music_3.play();
+    if(music_3.openFromFile("../../res/audio/music/background_music.wav")) {
+        music_3.play();
+    }
     music_3.setVolume(30.f);
     music_3.setLoop(true);
 
@@ -220,6 +221,16 @@ void Level3Scene::Update(const double& dt) {
   const auto pp = player->getPosition();
   if (ls::getTileAt(pp) == ls::END) {
     //Engine::ChangeScene((Scene*)&level4);
+
+      player_data_3["current_health"] = player->get_components<HealthComponentPlayer>()[0]->getHealth();
+      player_data_3["current_level"] = 1;
+
+      // update players json data with current data
+      std::ofstream o("../../res/data/player_data.json");
+
+      o << std::setw(4) << player_data_3 << std::endl;
+
+      Engine::ChangeScene((Scene*)&menu);
     return;
   } else if (!player->isAlive()) {
     Engine::ChangeScene((Scene*)&level3);

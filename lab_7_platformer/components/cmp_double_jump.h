@@ -16,7 +16,7 @@ private:
 public:
     void update(double dt) override;
 
-    void JumpUsed();
+    [[maybe_unused]] void JumpUsed();
 
     explicit DoubleJumpComponent(Entity* p);
 

@@ -208,8 +208,9 @@ void Level2Scene::Load() {
         }
     }
 
-    music_2.openFromFile("../../res/audio/music/background_music.wav");
-    music_2.play();
+    if(music_2.openFromFile("../../res/audio/music/background_music.wav")) {
+        music_2.play();
+    }
     music_2.setVolume(30.f);
     music_2.setLoop(true);
 

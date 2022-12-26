@@ -53,6 +53,7 @@ HurtComponent::HurtComponent(Entity* p)
     std::ifstream f("../../res/data/player_data.json");
     player_audio = json::parse(f);
 
-    hurtBuffer.loadFromFile(player_audio["hurt_sound"]);
-    hurtSound.setBuffer(hurtBuffer);
+    if(hurtBuffer.loadFromFile(player_audio["hurt_sound"])) {
+        hurtSound.setBuffer(hurtBuffer);
+    }
 }

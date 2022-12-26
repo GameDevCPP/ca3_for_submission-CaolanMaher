@@ -18,7 +18,7 @@ public:
 
     HealthPickupComponent() = delete;
 
-    int amountOfHealthAdded = 50;
+    [[maybe_unused]] int amountOfHealthAdded = 50;
 };
 
 

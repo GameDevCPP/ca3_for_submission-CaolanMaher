@@ -12,7 +12,7 @@ DoubleJumpComponent::DoubleJumpComponent(Entity *p) : ItemComponent(p, 30, 1) {
     //_parent
 }
 
-void DoubleJumpComponent::JumpUsed() {
+[[maybe_unused]] void DoubleJumpComponent::JumpUsed() {
     if(amountOfJumps > 0) {
         amountOfJumps -= 1;
     }

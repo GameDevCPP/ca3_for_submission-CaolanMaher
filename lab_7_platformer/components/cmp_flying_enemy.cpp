@@ -7,14 +7,6 @@
 
 void FlyingEnemyComponent::update(double dt) {
 
-    //auto mov = _direction * (float)(dt * _speed);
-    //mov.x += _direction.x * 16.f;
-    //if (!validMove(_parent->getPosition() + mov)) {
-    //    _direction *= -1.f;
-    //}
-
-    //move(_direction * (float)(dt * _speed));
-
     auto playerXPos = _player.lock()->getPosition().x;
     auto playerYPos = _player.lock()->getPosition().y;
     auto enemyXPos = _parent->getPosition().x;

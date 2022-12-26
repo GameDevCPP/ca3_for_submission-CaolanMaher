@@ -66,6 +66,15 @@ void MenuScene::Update(const double& dt) {
     }
 
   if (sf::Keyboard::isKeyPressed(Keyboard::Enter)) {
+
+      int playerLevel = player_data_menu["current_level"];
+
+      switch(playerLevel) {
+          [[unlikely]] case 1: Engine::ChangeScene(&level1);
+          [[likely]] case 2: Engine::ChangeScene(&level2);
+          case 3: Engine::ChangeScene(&level3);
+      }
+
       if(player_data_menu["current_level"] == 1) {
           Engine::ChangeScene(&level1);
       }
@@ -75,9 +84,11 @@ void MenuScene::Update(const double& dt) {
       else if(player_data_menu["current_level"] == 3) {
           Engine::ChangeScene(&level3);
       }
+      /*
       else if(player_data_menu["current_level"] == 4) {
           Engine::ChangeScene(&level4);
       }
+       */
   }
 
   Scene::Update(dt);

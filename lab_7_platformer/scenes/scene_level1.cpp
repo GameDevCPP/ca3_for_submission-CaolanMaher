@@ -178,8 +178,9 @@ void Level1Scene::Load() {
   std::this_thread::sleep_for(std::chrono::milliseconds(3000));
   cout << " Scene 1 Load Done" << endl;
 
-    music.openFromFile("../../res/audio/music/background_music.wav");
-    music.play();
+    if(music.openFromFile("../../res/audio/music/background_music.wav")) {
+        music.play();
+    }
     music.setVolume(30.f);
     music.setLoop(true);
 

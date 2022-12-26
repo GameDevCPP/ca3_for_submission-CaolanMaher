@@ -18,11 +18,13 @@ using namespace sf;
 AttackComponentPlayer::AttackComponentPlayer(Entity *p) : Component(p), _player(_parent->scene->ents.find("player")[0]) {
     std::ifstream f("../../res/data/player_data.json");
     player_res = json::parse(f);
-    slashBuffer.loadFromFile(player_res["attack_sound"]);
-    slashSound.setBuffer(slashBuffer);
+    if(slashBuffer.loadFromFile(player_res["attack_sound"])) {
+        slashSound.setBuffer(slashBuffer);
+    }
 
-    swordTexture.loadFromFile(player_res["weapon_image"]);
-    swordSprite.setTexture(swordTexture);
+    if(swordTexture.loadFromFile(player_res["weapon_image"])) {
+        swordSprite.setTexture(swordTexture);
+    }
     swordSprite.scale({0.04, 0.04});
     swordSprite.setOrigin({25.f, 25.f});
 }
