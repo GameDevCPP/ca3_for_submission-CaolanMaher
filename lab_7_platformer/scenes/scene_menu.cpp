@@ -18,17 +18,7 @@ void MenuScene::Load() {
   {
     auto txt = makeEntity();
     auto t = txt->addComponent<TextComponent>(
-        "Wizard Strike");
-
-    auto difficultyTxt = makeEntity();
-    auto tx = difficultyTxt->addComponent<TextComponent>(
-            "Press E for Easy Mode | Press H for Hard Mode");
-    difficultyTxt->setPosition(Vector2f(500, 500));
-
-    auto saveTxt = makeEntity();
-    auto stxt = saveTxt->addComponent<TextComponent>(
-            "Press Space to start a new game | Press Enter to Load saved game");
-    saveTxt->setPosition(Vector2f(0, 1000));
+        "Wizard Strike\nPress E for Easy Mode | Press H for Hard Mode\nPress Space to start a new game | Press Enter to Load saved game");
   }
 
   setLoaded(true);
@@ -70,11 +60,12 @@ void MenuScene::Update(const double& dt) {
       int playerLevel = player_data_menu["current_level"];
 
       switch(playerLevel) {
-          [[unlikely]] case 1: Engine::ChangeScene(&level1);
-          [[likely]] case 2: Engine::ChangeScene(&level2);
-          case 3: Engine::ChangeScene(&level3);
+          [[unlikely]] case 1: Engine::ChangeScene(&level1); break;
+          [[likely]] case 2: Engine::ChangeScene(&level2); break;
+          case 3: Engine::ChangeScene(&level3); break;
       }
 
+      /*
       if(player_data_menu["current_level"] == 1) {
           Engine::ChangeScene(&level1);
       }
@@ -84,6 +75,7 @@ void MenuScene::Update(const double& dt) {
       else if(player_data_menu["current_level"] == 3) {
           Engine::ChangeScene(&level3);
       }
+       */
       /*
       else if(player_data_menu["current_level"] == 4) {
           Engine::ChangeScene(&level4);
