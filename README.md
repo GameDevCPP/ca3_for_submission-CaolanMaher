@@ -2,7 +2,7 @@
 
 # Wizard Strike Game
 
-The video of the demo of the game can be found here:
+The video of the demo of the game can be found here: https://youtu.be/ucMiyEc8mb4 
 
 This GDD is split into 2 parts: a general GDD which handles overall view of the game and its features,
 and the technical GDD which goes into details on certain aspects such as components
