@@ -1,7 +1,7 @@
 {
     "attack_sound": "../../res/audio/sfx/slash.wav",
     "current_health": 100,
-    "current_level": 3,
+    "current_level": 1,
     "hurt_sound": "../../res/audio/sfx/hurt.wav",
     "is_hard_mode": true,
     "max_health": 100,

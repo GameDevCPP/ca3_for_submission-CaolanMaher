@@ -10,6 +10,7 @@
 #include "../components/cmp_adv_ground_enemy.h"
 #include "../components/cmp_health_pickup.h"
 #include <LevelSystem.h>
+#include <engine.h>
 #include <iostream>
 #include <fstream>
 #include "../../json/json.h"
@@ -230,7 +231,9 @@ void Level3Scene::Update(const double& dt) {
 
       o << std::setw(4) << player_data_3 << std::endl;
 
-      Engine::ChangeScene((Scene*)&menu);
+      //Engine::ChangeScene((Scene*)&level1);
+
+      Engine::GetWindow().close();
     return;
   } else if (!player->isAlive()) {
     Engine::ChangeScene((Scene*)&level3);
